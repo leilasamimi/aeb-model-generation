@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<genmodel:GenModel xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:ecore="http://www.eclipse.org/emf/2002/Ecore" xmlns:genmodel="http://www.eclipse.org/emf/2002/GenModel"
+    modelDirectory="/AEBsystem/src-gen" creationIcons="false" editDirectory="/AEBsystem.edit/src-gen"
+    editorDirectory="/AEBsystem.editor/src-gen" modelPluginID="AEBsystem" modelName="AEBsystem"
+    rootExtendsClass="org.eclipse.emf.ecore.impl.MinimalEObjectImpl$Container" codeFormatting="true"
+    importerID="org.eclipse.emf.importer.ecore" complianceLevel="5.0" copyrightFields="false"
+    operationReflection="true" importOrganizing="true">
+  <foreignModel>aEBsystem.ecore</foreignModel>
+  <testsDirectory xsi:nil="true"/>
+  <genPackages prefix="AEBsystem" disposableProviderFactory="true" ecorePackage="aEBsystem.ecore#/">
+    <genEnums typeSafeEnumCompatible="false" ecoreEnum="aEBsystem.ecore#//OperatingMode">
+      <genEnumLiterals ecoreEnumLiteral="aEBsystem.ecore#//OperatingMode/Normal"/>
+      <genEnumLiterals ecoreEnumLiteral="aEBsystem.ecore#//OperatingMode/Emergency"/>
+    </genEnums>
+    <genEnums typeSafeEnumCompatible="false" ecoreEnum="aEBsystem.ecore#//SensorType">
+      <genEnumLiterals ecoreEnumLiteral="aEBsystem.ecore#//SensorType/Radar"/>
+      <genEnumLiterals ecoreEnumLiteral="aEBsystem.ecore#//SensorType/Lidar"/>
+      <genEnumLiterals ecoreEnumLiteral="aEBsystem.ecore#//SensorType/Camera"/>
+    </genEnums>
+    <genEnums typeSafeEnumCompatible="false" ecoreEnum="aEBsystem.ecore#//ObstacleType">
+      <genEnumLiterals ecoreEnumLiteral="aEBsystem.ecore#//ObstacleType/Vehicle"/>
+      <genEnumLiterals ecoreEnumLiteral="aEBsystem.ecore#//ObstacleType/Pedestrian"/>
+      <genEnumLiterals ecoreEnumLiteral="aEBsystem.ecore#//ObstacleType/Static"/>
+    </genEnums>
+    <genEnums typeSafeEnumCompatible="false" ecoreEnum="aEBsystem.ecore#//State">
+      <genEnumLiterals ecoreEnumLiteral="aEBsystem.ecore#//State/Idle"/>
+      <genEnumLiterals ecoreEnumLiteral="aEBsystem.ecore#//State/Assessing"/>
+      <genEnumLiterals ecoreEnumLiteral="aEBsystem.ecore#//State/Acting"/>
+    </genEnums>
+    <genEnums typeSafeEnumCompatible="false" ecoreEnum="aEBsystem.ecore#//ActionType">
+      <genEnumLiterals ecoreEnumLiteral="aEBsystem.ecore#//ActionType/Brake"/>
+      <genEnumLiterals ecoreEnumLiteral="aEBsystem.ecore#//ActionType/Warn"/>
+      <genEnumLiterals ecoreEnumLiteral="aEBsystem.ecore#//ActionType/Steer"/>
+    </genEnums>
+    <genEnums typeSafeEnumCompatible="false" ecoreEnum="aEBsystem.ecore#//ActuatorType">
+      <genEnumLiterals ecoreEnumLiteral="aEBsystem.ecore#//ActuatorType/Brake"/>
+      <genEnumLiterals ecoreEnumLiteral="aEBsystem.ecore#//ActuatorType/Horn"/>
+      <genEnumLiterals ecoreEnumLiteral="aEBsystem.ecore#//ActuatorType/Steering"/>
+    </genEnums>
+    <genEnums typeSafeEnumCompatible="false" ecoreEnum="aEBsystem.ecore#//ConstraintType">
+      <genEnumLiterals ecoreEnumLiteral="aEBsystem.ecore#//ConstraintType/Timing"/>
+      <genEnumLiterals ecoreEnumLiteral="aEBsystem.ecore#//ConstraintType/Distance"/>
+    </genEnums>
+    <genEnums typeSafeEnumCompatible="false" ecoreEnum="aEBsystem.ecore#//ConditionType">
+      <genEnumLiterals ecoreEnumLiteral="aEBsystem.ecore#//ConditionType/Rain"/>
+      <genEnumLiterals ecoreEnumLiteral="aEBsystem.ecore#//ConditionType/Fog"/>
+      <genEnumLiterals ecoreEnumLiteral="aEBsystem.ecore#//ConditionType/Night"/>
+    </genEnums>
+    <genClasses ecoreClass="aEBsystem.ecore#//AEBSystem">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute aEBsystem.ecore#//AEBSystem/systemID"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute aEBsystem.ecore#//AEBSystem/operatingMode"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference aEBsystem.ecore#//AEBSystem/sensors"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference aEBsystem.ecore#//AEBSystem/controller"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference aEBsystem.ecore#//AEBSystem/actuators"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference aEBsystem.ecore#//AEBSystem/environmentconditions"/>
+    </genClasses>
+    <genClasses ecoreClass="aEBsystem.ecore#//Sensor">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute aEBsystem.ecore#//Sensor/sensorType"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute aEBsystem.ecore#//Sensor/range"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute aEBsystem.ecore#//Sensor/accuracy"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference aEBsystem.ecore#//Sensor/detectionEvents"/>
+    </genClasses>
+    <genClasses ecoreClass="aEBsystem.ecore#//Controller">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute aEBsystem.ecore#//Controller/state"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute aEBsystem.ecore#//Controller/dicisionLatency"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference aEBsystem.ecore#//Controller/actions"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference aEBsystem.ecore#//Controller/constraints"/>
+    </genClasses>
+    <genClasses ecoreClass="aEBsystem.ecore#//Actuator">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute aEBsystem.ecore#//Actuator/type"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute aEBsystem.ecore#//Actuator/maxForce"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute aEBsystem.ecore#//Actuator/status"/>
+      <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference aEBsystem.ecore#//Actuator/actions"/>
+    </genClasses>
+    <genClasses ecoreClass="aEBsystem.ecore#//DetectionEvent">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute aEBsystem.ecore#//DetectionEvent/timestamp"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute aEBsystem.ecore#//DetectionEvent/distance"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute aEBsystem.ecore#//DetectionEvent/confidence"/>
+      <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference aEBsystem.ecore#//DetectionEvent/triggeredBy"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference aEBsystem.ecore#//DetectionEvent/obstacle"/>
+    </genClasses>
+    <genClasses ecoreClass="aEBsystem.ecore#//Obstacle">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute aEBsystem.ecore#//Obstacle/obstacleType"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute aEBsystem.ecore#//Obstacle/speed"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute aEBsystem.ecore#//Obstacle/size"/>
+    </genClasses>
+    <genClasses ecoreClass="aEBsystem.ecore#//EmergencyActions">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute aEBsystem.ecore#//EmergencyActions/actionType"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute aEBsystem.ecore#//EmergencyActions/responseTime"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute aEBsystem.ecore#//EmergencyActions/priority"/>
+      <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference aEBsystem.ecore#//EmergencyActions/executedBy"/>
+    </genClasses>
+    <genClasses ecoreClass="aEBsystem.ecore#//SafetyConstraint">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute aEBsystem.ecore#//SafetyConstraint/constraintType"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute aEBsystem.ecore#//SafetyConstraint/threshold"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute aEBsystem.ecore#//SafetyConstraint/isCritical"/>
+      <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference aEBsystem.ecore#//SafetyConstraint/appliesTo"/>
+    </genClasses>
+    <genClasses ecoreClass="aEBsystem.ecore#//EnvironmentCondition">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute aEBsystem.ecore#//EnvironmentCondition/conditionType"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute aEBsystem.ecore#//EnvironmentCondition/severity"/>
+      <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference aEBsystem.ecore#//EnvironmentCondition/affects"/>
+    </genClasses>
+  </genPackages>
+</genmodel:GenModel>
