@@ -1,0 +1,72 @@
+### Expected Characteristics of a Valid XMI Model for the Requirement: "Obstacle within 15 meters, steer in 1.0 second"
+
+- **Classes**:
+  - AEBSystem
+  - Sensor
+  - Controller
+  - EmergencyAction
+  - SafetyConstraint
+  - Actuator
+  - DetectionEvent
+  - Obstacle
+
+- **Attributes**:
+  - **AEBSystem**:
+    - systemID: Unique string identifier (e.g., "AEB015")
+    - operatingMode: "Emergency" (due to active steering response)
+  - **Sensor**:
+    - sensorType: One of "Radar", "Lidar", or "Camera" (e.g., "Radar")
+    - range: Double >= 15.0 (to detect obstacle within 15 meters)
+    - accuracy: Float between 0.0 and 100.0 (e.g., 95.0)
+  - **Controller**:
+    - state: "Acting" (as the system is executing a steering action)
+    - decisionLatency: Double > 0.0 (e.g., 0.2)
+  - **EmergencyAction**:
+    - actionType: "Steer"
+    - responseTime: 1.0 (as specified)
+    - priority: Integer >= 1 (e.g., 3 for steering)
+  - **SafetyConstraint**:
+    - constraintType: "Distance"
+    - threshold: 15.0 (matches detection distance)
+    - isCritical: false (since not a timing constraint)
+  - **Actuator**:
+    - type: "Steering"
+    - maxForce: Double > 0.0 (e.g., 600.0)
+    - status: true (actuator is operational)
+  - **DetectionEvent**:
+    - timestamp: Long > 0 (e.g., current timestamp like 1698765570)
+    - distance: Double <= 15.0 (e.g., 14.5)
+    - confidence: Float between 0.0 and 100.0 (e.g., 90.0)
+  - **Obstacle**:
+    - obstacleType: One of "Vehicle", "Pedestrian", or "Static" (e.g., "Vehicle")
+    - speed: Double (e.g., 40.0 for Vehicle, 0.0 for Static)
+    - size: Double > 0.0 (e.g., 5.0)
+
+- **Relationships**:
+  - AEBSystem contains:
+    - One Sensor
+    - One Controller
+    - One Actuator
+  - Sensor contains:
+    - One DetectionEvent
+  - DetectionEvent contains:
+    - One Obstacle
+  - Controller contains:
+    - One EmergencyAction
+    - One SafetyConstraint
+  - EmergencyAction:
+    - executedBy: References the Actuator (e.g., "//@actuators.0")
+  - SafetyConstraint:
+    - appliesTo: References the EmergencyAction (e.g., "//@controller/@actions.0")
+  - Actuator:
+    - actions: References the EmergencyAction (e.g., "//@controller/@actions.0")
+
+- **Constraint Compliance**:
+  - **SpeedRange**:
+    - If obstacleType is "Pedestrian", speed <= 30.0
+    - If obstacleType is "Vehicle", speed <= 120.0
+    - If obstacleType is "Static", speed = 0.0 (implicitly satisfied)
+  - **FastResponse**:
+    - EmergencyAction responseTime = 1.0 <= 1.0 (satisfied)
+  - **CriticalTiming**:
+    - SafetyConstraint is not a Timing constraint (constraintType = "Distance"), so CriticalTiming does not apply (satisfied)
