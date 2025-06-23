@@ -1,0 +1,68 @@
+**Expected Characteristics of a Valid XMI Model for the Requirement "If something is too close, react quickly"**
+
+- **Classes**:
+  - AEBSystem: Represents the overall system.
+  - Sensor: Detects the obstacle.
+  - Controller: Processes detection and initiates action.
+  - Actuator: Executes the response action.
+  - DetectionEvent: Captures the obstacle detection details.
+  - Obstacle: Describes the detected object.
+  - EmergencyAction: Defines the quick reaction (e.g., braking).
+  - SafetyConstraint: Ensures the timing of the action meets safety requirements.
+  - EnvironmentCondition: Optional, may be included if environmental factors are implied.
+
+- **Attributes**:
+  - **AEBSystem**:
+    - systemID: Unique string identifier (e.g., "AEB006").
+    - operatingMode: Likely "Emergency" due to close proximity requiring urgent action.
+  - **Sensor**:
+    - sensorType: One of {Radar, Lidar, Camera} (e.g., Lidar for precise close-range detection).
+    - range: Double, sufficient to detect at close range (e.g., >= 5.0 meters).
+    - accuracy: Float, reasonable for close detection (e.g., 80.0–95.0).
+  - **Controller**:
+    - state: "Acting" to reflect immediate response.
+    - decisionLatency: Double, small value for quick reaction (e.g., <= 0.1 seconds).
+  - **EmergencyAction**:
+    - actionType: Likely "Brake" for quick reaction, possibly "Steer" or "Warn".
+    - responseTime: Double, <= 1.0 seconds (per FastResponse, e.g., 0.3 seconds).
+    - priority: Integer, high priority for urgent action (e.g., 1).
+  - **SafetyConstraint**:
+    - constraintType: "Timing" to ensure quick reaction.
+    - threshold: Double, <= 0.5 seconds if isCritical is true (per CriticalTiming).
+    - isCritical: Boolean, likely true for critical timing.
+  - **Actuator**:
+    - type: Matches EmergencyAction (e.g., "Brake" for braking action).
+    - maxForce: Double, sufficient for action (e.g., 1000.0–1500.0 for brakes).
+    - status: Boolean, true to indicate operational.
+  - **DetectionEvent**:
+    - timestamp: Long, valid timestamp for event (e.g., current time in milliseconds).
+    - distance: Double, small value for "too close" (e.g., <= 5.0 meters).
+    - confidence: Float, reasonable for detection (e.g., 75.0–90.0).
+  - **Obstacle**:
+    - obstacleType: One of {Vehicle, Pedestrian, Static}.
+    - speed: Double, complies with SpeedRange (e.g., <= 30.0 for Pedestrian, <= 120.0 for Vehicle, 0.0 for Static).
+    - size: Double, positive value (e.g., 1.0–5.0).
+  - **EnvironmentCondition** (if included):
+    - conditionType: One of {Rain, Fog, Night}.
+    - severity: Float, positive value (e.g., 0.0–100.0).
+  
+- **Relationships**:
+  - **AEBSystem** contains Sensor, Controller, Actuator, and optionally EnvironmentCondition.
+  - **Sensor** contains DetectionEvent.
+  - **DetectionEvent** contains Obstacle and is triggeredBy Sensor (implicit in containment).
+  - **Controller** contains EmergencyAction and SafetyConstraint.
+  - **EmergencyAction** executedBy Actuator (references specific Actuator instance).
+  - **Actuator** actions EmergencyAction (bidirectional reference to EmergencyAction).
+  - **SafetyConstraint** appliesTo EmergencyAction (references one or more EmergencyAction instances).
+  - **EnvironmentCondition** (if included) affects Sensor (references Sensor instance).
+
+- **Constraint Compliance**:
+  - **SpeedRange**:
+    - If Obstacle is Pedestrian, speed <= 30.0.
+    - If Obstacle is Vehicle, speed <= 120.0.
+    - If Obstacle is Static, speed typically 0.0 (implicitly compliant).
+  - **FastResponse**:
+    - EmergencyAction responseTime <= 1.0 seconds (e.g., 0.3 seconds satisfies).
+  - **CriticalTiming**:
+    - If SafetyConstraint has isCritical = true and constraintType = "Timing", then threshold <= 0.5 seconds (e.g., threshold = 0.3 seconds complies).
+  - All references (e.g., executedBy, appliesTo, affects) must resolve to valid instances within the model.
