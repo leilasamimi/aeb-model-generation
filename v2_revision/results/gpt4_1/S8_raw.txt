@@ -1,0 +1,53 @@
+```xml
+<?xml version="1.0" encoding="UTF-8"?>
+<aEBsystem:AEBSystem
+    xmi:version="2.0"
+    xmlns:xmi="http://www.omg.org/XMI"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:aEBsystem="http://www.example.org/aEBsystem"
+    xsi:schemaLocation="http://www.example.org/aEBsystem aEBsystem.ecore"
+    systemID="AEB006"
+    operatingMode="Emergency">
+  <sensors sensorType="Radar"
+      range="6.0"
+      accuracy="93.0">
+    <detectionEvents
+        timestamp="1698765500"
+        distance="3.0"
+        confidence="95.0">
+      <obstacle
+          obstacleType="Vehicle"
+          speed="15.0"
+          size="4.0"/>
+    </detectionEvents>
+  </sensors>
+  <controller
+      state="Acting"
+      decisionLatency="0.04">
+    <actions
+        actionType="Brake"
+        responseTime="0.3"
+        priority="1"
+        executedBy="//@actuators.0"/>
+    <constraints
+        constraintType="Timing"
+        threshold="0.3"
+        isCritical="true"
+        appliesTo="//@controller/@actions.0"/>
+  </controller>
+  <actuators
+      type="Brake"
+      maxForce="1300.0"
+      status="true"
+      actions="//@controller/@actions.0"/>
+</aEBsystem:AEBSystem>
+```
+**Rationale:**  
+- Sensor of type Radar with short range & high confidence, as object is dangerously near.  
+- DetectionEvent reports object (Vehicle) at 3.0 meters.  
+- Controller is 'Acting' and responds with a Brake action in 0.3s (fast response).  
+- Emergency action references actuator, satisfies FastResponse constraint (≤ 1.0s).  
+- SafetyConstraint of type Timing, critical (threshold 0.3 ≤ 0.5).  
+- Actuator of type 'Brake', active.  
+- Immediate/emergency operation mode.  
+- Complies with all structure, constraints, and references as per metamodel.

@@ -1,0 +1,60 @@
+```xml
+<?xml version="1.0" encoding="UTF-8"?>
+<aEBsystem:AEBSystem
+    xmi:version="2.0"
+    xmlns:xmi="http://www.omg.org/XMI"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:aEBsystem="http://www.example.org/aEBsystem"
+    xsi:schemaLocation="http://www.example.org/aEBsystem aEBsystem.ecore"
+    systemID="AEB006"
+    operatingMode="Emergency">
+  <sensors sensorType="Radar"
+      range="15.0"
+      accuracy="93.0">
+    <detectionEvents
+        timestamp="1698765500"
+        distance="9.0"
+        confidence="85.0">
+      <obstacle
+          obstacleType="Vehicle"
+          speed="40.0"
+          size="4.0"/>
+    </detectionEvents>
+  </sensors>
+  <sensors sensorType="Camera"
+      range="12.0"
+      accuracy="90.0"/>
+  <controller
+      state="Acting"
+      decisionLatency="0.12">
+    <actions
+        actionType="Brake"
+        responseTime="0.8"
+        priority="1"
+        executedBy="//@actuators.0"/>
+    <constraints
+        constraintType="Timing"
+        threshold="0.8"
+        isCritical="false"
+        appliesTo="//@controller/@actions.0"/>
+  </controller>
+  <actuators
+      type="Brake"
+      maxForce="1000.0"
+      status="true"
+      actions="//@controller/@actions.0"/>
+</aEBsystem:AEBSystem>
+```
+**Explanation:**
+
+- **Radar sensor** detects an obstacle at 9m (distance=9.0), with high confidence (85.0), with full detection details.
+- **Camera sensor** (range specified, accuracy, but NO detectionEvents → detects nothing).
+- **Controller** in "Acting" state after detection, with decisionLatency=0.12s.
+- **EmergencyAction** is "Brake" with responseTime=0.8 (meets FastResponse constraint: ≤1.0), priority=1, executed by the first actuator.
+- **Constraint** is on Timing, not critical (since threshold is not extremely low and not flagged as isCritical).
+- **Actuator** is "Brake", active (status="true"), linked to the EmergencyAction.
+- No environment condition is specified in requirement, so it's omitted.
+- "Vehicle" is chosen as the obstacle type (as the default for ambiguous obstacle unless otherwise specified).
+- The model allows for extension (e.g., additional action Warn/Steer) if stricter requirements are indicated.
+
+Let me know if you need a variant with "Safe React" as "Warn" or a more abstract reaction!

@@ -1,0 +1,55 @@
+```xml
+<?xml version="1.0" encoding="UTF-8"?>
+<aEBsystem:AEBSystem
+    xmi:version="2.0"
+    xmlns:xmi="http://www.omg.org/XMI"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:aEBsystem="http://www.example.org/aEBsystem"
+    xsi:schemaLocation="http://www.example.org/aEBsystem aEBsystem.ecore"
+    systemID="AEB006"
+    operatingMode="Normal">
+  <sensors sensorType="Radar"
+      range="12.0"
+      accuracy="80.0">
+    <detectionEvents
+        timestamp="1698765480"
+        distance="7.5"
+        confidence="65.0">
+      <obstacle
+          obstacleType="Vehicle"
+          speed="24.0"
+          size="4.0"/>
+    </detectionEvents>
+  </sensors>
+  <controller
+      state="Assessing"
+      decisionLatency="0.5">
+    <actions
+        actionType="Brake"
+        responseTime="1.0"
+        priority="2"
+        executedBy="//@actuators.0"/>
+    <constraints
+        constraintType="Timing"
+        threshold="1.0"
+        isCritical="false"
+        appliesTo="//@controller/@actions.0"/>
+  </controller>
+  <actuators
+      type="Brake"
+      maxForce="800.0"
+      status="true"
+      actions="//@controller/@actions.0"/>
+  <environmentconditions
+      conditionType="Fog"
+      severity="75.0"
+      affects="//@sensors.0"/>
+</aEBsystem:AEBSystem>
+```
+**Explanation**:
+
+- **Sensor** confidence is below 70 (`65.0`), `distance` is within 8 meters (`7.5`), and `environmentCondition` is `Fog` (`severity="75.0"`), satisfying the requirement.
+- **Conservative response**: `controller.state="Assessing"`, `decisionLatency="0.5"` (higher latency, not rushing), `EmergencyAction` type is `Brake`, responseTime is at the maximum allowed by constraints for non-critical timing (`1.0`), priority is lower (`2`).
+- **Constraint**: `isCritical="false"` so `threshold="1.0"` for Timing.
+- **Actuator**: Type matches action (`Brake`), conservative force (`800.0`).
+- **All references and containment links are correct as per the metamodel.**

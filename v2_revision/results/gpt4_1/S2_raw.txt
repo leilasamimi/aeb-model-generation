@@ -1,0 +1,50 @@
+```xml
+<?xml version="1.0" encoding="UTF-8"?>
+<aEBsystem:AEBSystem
+    xmi:version="2.0"
+    xmlns:xmi="http://www.omg.org/XMI"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:aEBsystem="http://www.example.org/aEBsystem"
+    xsi:schemaLocation="http://www.example.org/aEBsystem aEBsystem.ecore"
+    systemID="AEB006">
+  <sensors sensorType="Radar"
+      range="60.0"
+      accuracy="93.0">
+    <detectionEvents
+        timestamp="1698765500"
+        distance="25.0"
+        confidence="92.0">
+      <obstacle
+          obstacleType="Vehicle"
+          speed="55.0"
+          size="4.5"/>
+    </detectionEvents>
+  </sensors>
+  <controller
+      state="Acting"
+      decisionLatency="0.2">
+    <actions
+        actionType="Warn"
+        responseTime="1.0"
+        priority="1"
+        executedBy="//@actuators.0"/>
+    <constraints
+        constraintType="Timing"
+        threshold="1.0"
+        isCritical="true"
+        appliesTo="//@controller/@actions.0"/>
+  </controller>
+  <actuators
+      type="Horn"
+      status="true"
+      actions="//@controller/@actions.0"/>
+</aEBsystem:AEBSystem>
+```
+**Notes on model construction:**
+- The Sensor is set as Radar (well-suited for speed detection) with appropriate range and accuracy.
+- DetectionEvent contains an Obstacle of type Vehicle, speed="55.0" (satisfying "> 50" km/h, and within Vehicle speed range constraint).
+- Controller has an EmergencyAction "Warn" with responseTime="1.0" (satisfies FastResponse constraint).
+- SafetyConstraint of type "Timing", isCritical="true", threshold="1.0" (satisfies CriticalTiming, as threshold = 1.0 <= 1.0).
+- Actuator is Horn, status="true", and references the correct action.
+
+This model strictly follows the structure and cross-references as per the provided metamodel and the style of the given examples.

@@ -1,0 +1,55 @@
+```xml
+<?xml version="1.0" encoding="UTF-8"?>
+<aEBsystem:AEBSystem
+    xmi:version="2.0"
+    xmlns:xmi="http://www.omg.org/XMI"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:aEBsystem="http://www.example.org/aEBsystem"
+    xsi:schemaLocation="http://www.example.org/aEBsystem aEBsystem.ecore"
+    systemID="AEB006"
+    operatingMode="Emergency">
+  <sensors sensorType="Radar"
+      range="5.0"
+      accuracy="93.0">
+    <detectionEvents
+        timestamp="1698765500"
+        distance="2.0"
+        confidence="94.0">
+      <obstacle
+          obstacleType="Vehicle"
+          speed="12.0"
+          size="4.2"/>
+    </detectionEvents>
+  </sensors>
+  <controller
+      state="Acting"
+      decisionLatency="0.05">
+    <actions
+        actionType="Brake"
+        responseTime="0.3"
+        priority="1"
+        executedBy="//@actuators.0"/>
+    <constraints
+        constraintType="Timing"
+        threshold="0.3"
+        isCritical="true"
+        appliesTo="//@controller/@actions.0"/>
+  </controller>
+  <actuators
+      type="Brake"
+      maxForce="1200.0"
+      status="true"
+      actions="//@controller/@actions.0"/>
+</aEBsystem:AEBSystem>
+```
+**Explanation of modeling choices:**
+
+- "Something too close" → Obstacle at **2m** (within 5m radar range).
+- "React quickly" → Fast reaction: **braking in 0.3s** (meets FastResponse constraint).
+- EmergencyMode is set (proximity).
+- Sensor: Radar, accurate and suitable for close detection.
+- Controller: Acting immediately, low latency.
+- Emergency Action: Brake with highest priority, fast response, executed by Brake actuator.
+- Constraint: Timing/critical, threshold matches response, critical set true (CriticalTiming constraint applies).
+- Actuator: Brake, strong/maxForce, up and operational.
+- Obstacle: Vehicle, speed well within valid range.
