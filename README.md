@@ -1,4 +1,9 @@
-# aeb-model-generation
+# AEB-model-generation
+## Repository Structure
+
+- v1_initial: Initial artifacts from early submission
+- v2_revision: Revised and extended artifacts used in the revised manuscript
+
 # AEB Model Generation Prompts
 This repository contains prompts and generated XMI models for the Autonomous Emergency Braking (AEB) system, as described in the paper "Enhancing Safety-Critical System Verification: Integrating Large Language Models with Model-Driven Engineering."
 
