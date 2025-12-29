@@ -4,16 +4,43 @@
 - v1_initial: Initial artifacts from early submission
 - v2_revision: Revised and extended artifacts used in the revised manuscript
 
-# AEB Model Generation Prompts
-This repository contains prompts and generated XMI models for the Autonomous Emergency Braking (AEB) system, as described in the paper "Enhancing Safety-Critical System Verification: Integrating Large Language Models with Model-Driven Engineering."
+# v2_revision — Revised Evaluation and Extended Artifacts
 
-## Structure
-- `prompts/`: Contains Few-Shot prompts for generating XMI models.
-- `models/`: Contains generated XMI models for each scenario.
+This folder contains the revised and extended artifacts used in the second version of the *AEB Model Generation* project, corresponding to the updated evaluation and methodology presented in the revised manuscript.
 
-## Metamodel Summary
-- AEBSystem: systemID (String), operatingMode (Normal/Emergency), ...
-- Constraints: SpeedRange (Pedestrian <= 30.0 km/h, Vehicle <= 120.0 km/h), ...
+The goal of this revision is to support the paper’s enhanced evaluation pipeline, which integrates Large Language Models (LLMs), model-driven engineering constructs (metamodel, EVL validation, EGL transformation), and formal verification via UPPAAL.
 
-## Usage
-Use these prompts with Grok (xAI API, https://x.ai/api) or other LLMs like GPT-4. Configure with temperature=0.7, max_tokens=2048.
+---
+
+## Contents
+
+- **Prompts/**  
+  Few-shot learning prompts used to generate AEB models from natural-language driving scenarios.
+
+- **Models/**  
+  Generated XMI models for each evaluation scenario, produced by three different LLMs (DeepSeek, GPT-4, Grok-3).
+
+- **Evaluation/**  
+  Artifacts related to the rule-based comparative evaluation, including summary tables and analysis data.
+
+- **Scripts/**  
+  Python helper scripts for running prompt-based model generation and performing rule-based evaluation.
+
+---
+
+## Overview of Key Components
+
+### Metamodel
+The AEB metamodel defines the structural and semantic primitives of the automated emergency braking system. It is implemented in the Eclipse Modeling Framework (EMF) and serves as the schema for all generated XMI models.
+
+### EVL Validation
+EVL (Epsilon Validation Language) constraints enforce domain-specific rules that cannot be captured purely in the metamodel. These constraints ensure that generated models satisfy safety-relevant and semantic conditions before transformation.
+
+### EGL Transformation
+EGL (Epsilon Generation Language) templates automatically convert validated EMF-compliant models into UPPAAL-compatible XML specifications, enabling formal verification without manual intervention.
+
+### Formal Verification with UPPAAL
+The generated UPPAAL models are verified against representative timing and safety properties. The evaluation focuses on methodological feasibility rather than exhaustive industrial-grade automotive analysis.
+
+
+
