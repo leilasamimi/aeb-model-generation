@@ -1,0 +1,44 @@
+<aEBsystem:AEBSystem
+    xmi:version="2.0"
+    xmlns:xmi="http://www.omg.org/XMI"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:aEBsystem="http://www.example.org/aEBsystem"
+    xsi:schemaLocation="http://www.example.org/aEBsystem aEBsystem.ecore"
+    systemID="AEB006"
+    operatingMode="Emergency">
+  <sensors sensorType="Camera"
+      range="15.0"
+      accuracy="92.0">
+    <detectionEvents
+        timestamp="1698765480"
+        distance="5.0"
+        confidence="95.0">
+      <obstacle
+          obstacleType="Pedestrian"
+          speed="30.0"
+          size="1.8"/>
+    </detectionEvents>
+  </sensors>
+  <controller
+      state="Acting"
+      decisionLatency="0.1">
+    <actions
+        responseTime="0.5"
+        priority="1"
+        executedBy="//@actuators.0"/>
+    <constraints
+        constraintType="Timing"
+        threshold="0.5"
+        isCritical="true"
+        appliesTo="//@controller/@actions.0"/>
+    <constraints
+        constraintType="Distance"
+        threshold="5.0"
+        isCritical="false"
+        appliesTo="//@controller/@actions.0"/>
+  </controller>
+  <actuators
+      maxForce="1000.0"
+      status="true"
+      actions="//@controller/@actions.0"/>
+</aEBsystem:AEBSystem>

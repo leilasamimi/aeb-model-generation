@@ -1,0 +1,58 @@
+<aEBsystem:AEBSystem
+    xmi:version="2.0"
+    xmlns:xmi="http://www.omg.org/XMI"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:aEBsystem="http://www.example.org/aEBsystem"
+    xsi:schemaLocation="http://www.example.org/aEBsystem aEBsystem.ecore"
+    systemID="AEB006"
+    operatingMode="Emergency">
+  <sensors sensorType="Radar"
+      range="15.0"
+      accuracy="85.0">
+    <detectionEvents
+        timestamp="1698765480"
+        distance="7.5"
+        confidence="65.0">
+      <obstacle
+          obstacleType="Vehicle"
+          speed="40.0"
+          size="4.5"/>
+    </detectionEvents>
+  </sensors>
+  <controller
+      state="Assessing"
+      decisionLatency="0.15">
+    <actions
+        actionType="Warn"
+        responseTime="0.8"
+        priority="2"
+        executedBy="//@actuators.0"/>
+    <actions
+        actionType="Brake"
+        responseTime="1.0"
+        priority="1"
+        executedBy="//@actuators.1"/>
+    <constraints
+        constraintType="Timing"
+        threshold="1.0"
+        isCritical="false"
+        appliesTo="//@controller/@actions.0 //@controller/@actions.1"/>
+    <constraints
+        constraintType="Distance"
+        threshold="8.0"
+        isCritical="false"
+        appliesTo="//@controller/@actions.0 //@controller/@actions.1"/>
+  </controller>
+  <actuators
+      type="Horn"
+      status="true"
+      actions="//@controller/@actions.0"/>
+  <actuators
+      maxForce="800.0"
+      status="true"
+      actions="//@controller/@actions.1"/>
+  <environmentconditions
+      conditionType="Fog"
+      severity="70.0"
+      affects="//@sensors.0"/>
+</aEBsystem:AEBSystem>

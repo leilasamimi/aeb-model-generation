@@ -1,0 +1,110 @@
+```xml
+<?xml version="1.0" encoding="UTF-8"?>
+<aEBsystem:AEBSystem
+    xmi:version="2.0"
+    xmlns:xmi="http://www.omg.org/XMI"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:aEBsystem="http://www.example.org/aEBsystem"
+    xsi:schemaLocation="http://www.example.org/aEBsystem aEBsystem.ecore"
+    systemID="AEB_Pedestrian_Response"
+    operatingMode="Emergency">
+    
+  <sensors 
+      sensorType="Camera"
+      range="10.0"
+      accuracy="92.0">
+    <detectionEvents
+        timestamp="1698765480"
+        distance="6.2"
+        confidence="91.0">
+      <obstacle
+          obstacleType="Pedestrian"
+          speed="5.0"
+          size="1.6"/>
+    </detectionEvents>
+  </sensors>
+  
+  <controller
+      state="Acting"
+      decisionLatency="0.06">
+    <actions
+        actionType="Brake"
+        responseTime="0.4"
+        priority="1"
+        executedBy="//@actuators.0"/>
+    <actions
+        actionType="Warn"
+        responseTime="0.4"
+        priority="2"
+        executedBy="//@actuators.1"/>
+    <constraints
+        constraintType="Timing"
+        threshold="0.4"
+        isCritical="true"
+        appliesTo="//@controller/@actions.0 //@controller/@actions.1"/>
+  </controller>
+  
+  <actuators
+      type="Brake"
+      maxForce="1150.0"
+      status="true"
+      actions="//@controller/@actions.0"/>
+      
+  <actuators
+      type="Horn"
+      status="true"
+      actions="//@controller/@actions.1"/>
+      
+</aEBsystem:AEBSystem>
+```
+
+**Model Compliance Explanation:**
+
+1. **AEBSystem**: 
+   - `systemID="AEB_Pedestrian_Response"` (unique identifier)
+   - `operatingMode="Emergency"` (since emergency actions are triggered)
+
+2. **Sensor**:
+   - `sensorType="Camera"` (appropriate for pedestrian detection)
+   - `range="10.0"` (exceeds the 7m requirement)
+   - `accuracy="92.0"` (reasonable camera accuracy)
+   - Contains one DetectionEvent
+
+3. **DetectionEvent**:
+   - `timestamp="1698765480"` (arbitrary timestamp)
+   - `distance="6.2"` (within 7 meters as required)
+   - `confidence="91.0"` (high confidence detection)
+   - Contains an Obstacle
+
+4. **Obstacle**:
+   - `obstacleType="Pedestrian"` (matches requirement)
+   - `speed="5.0"` (≤ 30.0, satisfying SpeedRange constraint)
+   - `size="1.6"` (reasonable pedestrian size)
+
+5. **Controller**:
+   - `state="Acting"` (actively responding)
+   - `decisionLatency="0.06"` (fast decision making)
+   - Contains two EmergencyActions (Brake and Warn)
+   - Contains one SafetyConstraint
+
+6. **EmergencyActions**:
+   - First action: `actionType="Brake"`, `responseTime="0.4"`, `priority="1"`
+   - Second action: `actionType="Warn"`, `responseTime="0.4"`, `priority="2"`
+   - Both have `responseTime="0.4"` ≤ 1.0 (satisfies FastResponse constraint)
+
+7. **SafetyConstraint**:
+   - `constraintType="Timing"` (appropriate for response time constraint)
+   - `threshold="0.4"` (matches required response time)
+   - `isCritical="true"` (pedestrian detection is critical)
+   - `threshold="0.4"` ≤ 0.5 (satisfies CriticalTiming constraint)
+   - `appliesTo` references both emergency actions
+
+8. **Actuators**:
+   - First actuator: `type="Brake"`, `maxForce="1150.0"`, executes braking action
+   - Second actuator: `type="Horn"`, executes warning action
+   - Both have `status="true"` (operational)
+
+All metamodel constraints are satisfied:
+- SpeedRange: Pedestrian speed (5.0) ≤ 30.0 ✓
+- FastResponse: Both actions have responseTime (0.4) ≤ 1.0 ✓
+- CriticalTiming: Timing constraint with isCritical=true has threshold (0.4) ≤ 0.5 ✓

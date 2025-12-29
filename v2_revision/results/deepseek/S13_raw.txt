@@ -1,0 +1,87 @@
+Based on the requirement, we need to model a scenario where a time-to-collision constraint triggers an emergency braking action. The requirement implies a critical timing constraint with a threshold of 0.5 seconds.
+
+Here's the XMI model:
+
+```xml
+<?xml version="1.0" encoding="UTF-8"?>
+<aEBsystem:AEBSystem
+    xmi:version="2.0"
+    xmlns:xmi="http://www.omg.org/XMI"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:aEBsystem="http://www.example.org/aEBsystem"
+    xsi:schemaLocation="http://www.example.org/aEBsystem aEBsystem.ecore"
+    systemID="AEB006"
+    operatingMode="Emergency">
+    
+  <!-- Sensor detecting an obstacle with time-to-collision calculation -->
+  <sensors 
+      sensorType="Radar"
+      range="50.0"
+      accuracy="92.0">
+    <detectionEvents
+        timestamp="1698765480"
+        distance="15.0"
+        confidence="95.0">
+      <obstacle
+          obstacleType="Vehicle"
+          speed="30.0"
+          size="4.5"/>
+    </detectionEvents>
+  </sensors>
+  
+  <!-- Controller assessing and acting on the critical timing constraint -->
+  <controller
+      state="Acting"
+      decisionLatency="0.05">
+      
+    <!-- Emergency braking action with immediate response -->
+    <actions
+        actionType="Brake"
+        responseTime="0.1"
+        priority="1"
+        executedBy="//@actuators.0"/>
+    
+    <!-- Critical timing constraint for time-to-collision -->
+    <constraints
+        constraintType="Timing"
+        threshold="0.5"
+        isCritical="true"
+        appliesTo="//@controller/@actions.0"/>
+  </controller>
+  
+  <!-- Brake actuator to execute the emergency action -->
+  <actuators
+      type="Brake"
+      maxForce="1500.0"
+      status="true"
+      actions="//@controller/@actions.0"/>
+      
+</aEBsystem:AEBSystem>
+```
+
+**Key elements in this model:**
+
+1. **System Configuration**: 
+   - `systemID="AEB006"` with `operatingMode="Emergency"` since this is a critical scenario
+
+2. **Sensor and Detection**:
+   - Radar sensor with 50m range detecting a vehicle
+   - Detection event shows a vehicle at 15m distance
+   - Vehicle speed is 30.0 (within Vehicle speed constraint ≤ 120.0)
+
+3. **Controller and Emergency Action**:
+   - Controller in "Acting" state with low decision latency (0.05s)
+   - Emergency braking action with very fast response time (0.1s ≤ 1.0, satisfying FastResponse constraint)
+   - Priority 1 (highest) for immediate braking
+
+4. **Safety Constraint**:
+   - Timing constraint with threshold 0.5 seconds
+   - `isCritical="true"` which implies `threshold ≤ 0.5` (satisfying CriticalTiming constraint)
+
+5. **Actuator**:
+   - Brake actuator with high maxForce (1500.0) ready to execute the braking action
+
+The model satisfies all metamodel constraints:
+- Vehicle speed (30.0) ≤ 120.0 (SpeedRange constraint)
+- Response time (0.1s) ≤ 1.0s (FastResponse constraint)
+- Critical timing constraint threshold (0.5s) ≤ 0.5s (CriticalTiming constraint)

@@ -1,0 +1,86 @@
+<aEBsystem:AEBSystem
+    xmi:version="2.0"
+    xmlns:xmi="http://www.omg.org/XMI"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:aEBsystem="http://www.example.org/aEBsystem"
+    xsi:schemaLocation="http://www.example.org/aEBsystem aEBsystem.ecore"
+    systemID="AEB006"
+    operatingMode="Emergency">
+    
+    <!-- Sensor 1: Radar -->
+    <sensors
+        sensorType="Radar"
+        range="15.0"
+        accuracy="92.0">
+        <detectionEvents
+            timestamp="1698765480"
+            distance="8.5"
+            confidence="91.0">
+            <obstacle
+                obstacleType="Vehicle"
+                speed="45.0"
+                size="4.5"/>
+        </detectionEvents>
+        <detectionEvents
+            timestamp="1698765481"
+            distance="6.2"
+            confidence="89.0">
+            <obstacle
+                obstacleType="Pedestrian"
+                speed="12.0"
+                size="1.8"/>
+        </detectionEvents>
+    </sensors>
+    
+    <!-- Sensor 2: Lidar -->
+    <sensors
+        sensorType="Lidar"
+        range="12.0"
+        accuracy="94.0">
+        <detectionEvents
+            timestamp="1698765480"
+            distance="8.3"
+            confidence="93.0">
+            <obstacle
+                obstacleType="Vehicle"
+                speed="43.0"
+                size="4.3"/>
+        </detectionEvents>
+        <detectionEvents
+            timestamp="1698765481"
+            distance="6.0"
+            confidence="90.0">
+            <obstacle
+                obstacleType="Pedestrian"
+                speed="10.0"
+                size="1.7"/>
+        </detectionEvents>
+    </sensors>
+    
+    <!-- Controller prioritizing closest obstacle (Pedestrian at 6.0m) -->
+    <controller
+        state="Acting"
+        decisionLatency="0.1">
+        <actions
+            responseTime="0.4"
+            priority="1"
+            executedBy="//@actuators.0"/>
+        <constraints
+            threshold="0.4"
+            isCritical="true"
+            appliesTo="//@controller/@actions.0"/>
+    </controller>
+    
+    <!-- Brake actuator -->
+    <actuators
+        type="Brake"
+        maxForce="1200.0"
+        status="true"
+        actions="//@controller/@actions.0"/>
+    
+    <!-- Rainy environment affecting both sensors -->
+    <environmentconditions
+        conditionType="Rain"
+        severity="70.0"
+        affects="//@sensors.0 //@sensors.1"/>
+</aEBsystem:AEBSystem>

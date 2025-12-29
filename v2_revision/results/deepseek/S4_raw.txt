@@ -1,0 +1,78 @@
+```xml
+<?xml version="1.0" encoding="UTF-8"?>
+<aEBsystem:AEBSystem
+    xmi:version="2.0"
+    xmlns:xmi="http://www.omg.org/XMI"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:aEBsystem="http://www.example.org/aEBsystem"
+    xsi:schemaLocation="http://www.example.org/aEBsystem aEBsystem.ecore"
+    systemID="AEB006"
+    operatingMode="Emergency">
+  <sensors
+      range="10.0"
+      accuracy="92.0">
+    <detectionEvents
+        timestamp="1698765480"
+        distance="5.5"
+        confidence="85.0">
+      <obstacle
+          speed="15.0"
+          size="3.0"/>
+    </detectionEvents>
+  </sensors>
+  <controller
+      state="Acting"
+      decisionLatency="0.06">
+    <actions
+        actionType="Warn"
+        responseTime="0.3"
+        priority="1"
+        executedBy="//@actuators.0"/>
+    <constraints
+        constraintType="Timing"
+        threshold="0.3"
+        isCritical="true"
+        appliesTo="//@controller/@actions.0"/>
+  </controller>
+  <actuators
+      type="Horn"
+      status="true"
+      actions="//@controller/@actions.0"/>
+</aEBsystem:AEBSystem>
+```
+
+**Explanation of compliance with the metamodel and constraints:**
+
+1. **AEBSystem**: Contains systemID, operatingMode (set to Emergency since warning action is triggered), and contains all required components.
+
+2. **Sensor**: Contains a DetectionEvent with distance (5.5m) within the 6-meter requirement. The sensor range (10.0) exceeds detection distance.
+
+3. **DetectionEvent**: Contains timestamp, distance, confidence, and references an Obstacle.
+
+4. **Obstacle**: Has speed (15.0) and size (3.0) attributes. Speed is within the Vehicle constraint (≤120.0).
+
+5. **Controller**: State is "Acting" since it's executing an emergency action. Contains one EmergencyAction and one SafetyConstraint.
+
+6. **EmergencyAction**: 
+   - actionType: "Warn" (as specified in requirement)
+   - responseTime: 0.3 seconds (meets FastResponse constraint: ≤1.0)
+   - priority: 1 (highest priority for warning)
+   - executedBy: References the actuator
+
+7. **SafetyConstraint**:
+   - constraintType: "Timing" (appropriate for response time requirement)
+   - threshold: 0.3 seconds (matches responseTime)
+   - isCritical: true (implies threshold ≤0.5, meeting CriticalTiming constraint)
+
+8. **Actuator**:
+   - type: "Horn" (appropriate for warning action)
+   - status: true (active)
+   - actions: References the emergency action
+
+All metamodel relationships are maintained:
+- Sensor contains DetectionEvent
+- DetectionEvent contains Obstacle
+- Controller contains EmergencyAction and SafetyConstraint
+- SafetyConstraint appliesTo EmergencyAction
+- EmergencyAction executedBy Actuator
+- Actuator actions references EmergencyAction

@@ -1,0 +1,83 @@
+Based on the requirement, we need to model a scenario where:
+1. A radar sensor detects an obstacle at 9 meters
+2. A camera sensor does NOT detect it (implied by "camera does not")
+3. The system should react safely when any sensor detects danger
+4. The reaction should be appropriate for "imminent danger"
+
+Here's the XMI model:
+
+```xml
+<?xml version="1.0" encoding="UTF-8"?>
+<aEBsystem:AEBSystem
+    xmi:version="2.0"
+    xmlns:xmi="http://www.omg.org/XMI"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:aEBsystem="http://www.example.org/aEBsystem"
+    xsi:schemaLocation="http://www.example.org/aEBsystem aEBsystem.ecore"
+    systemID="AEB006"
+    operatingMode="Emergency">
+    
+  <!-- Radar sensor detects obstacle -->
+  <sensors 
+      sensorType="Radar"
+      range="15.0"
+      accuracy="92.0">
+    <detectionEvents
+        timestamp="1698765480"
+        distance="9.0"
+        confidence="85.0">
+      <obstacle
+          obstacleType="Vehicle"
+          speed="40.0"
+          size="4.5"/>
+    </detectionEvents>
+  </sensors>
+  
+  <!-- Camera sensor (no detection events) -->
+  <sensors 
+      sensorType="Camera"
+      range="12.0"
+      accuracy="88.0"/>
+  
+  <controller
+      state="Acting"
+      decisionLatency="0.15">
+    <actions
+        responseTime="0.8"
+        priority="1"
+        executedBy="//@actuators.0"/>
+    <constraints
+        constraintType="Distance"
+        threshold="10.0"
+        isCritical="false"
+        appliesTo="//@controller/@actions.0"/>
+    <constraints
+        constraintType="Timing"
+        threshold="1.0"
+        isCritical="false"
+        appliesTo="//@controller/@actions.0"/>
+  </controller>
+  
+  <actuators
+      type="Brake"
+      maxForce="1000.0"
+      status="true"
+      actions="//@controller/@actions.0"/>
+      
+</aEBsystem:AEBSystem>
+```
+
+**Key points about this model:**
+
+1. **Two sensors**: Radar (with detection) and Camera (without detection events)
+2. **Radar detection**: Shows an obstacle at 9 meters (within the "imminent danger" range)
+3. **Obstacle type**: Vehicle with speed 40.0 km/h (within Vehicle speed constraint ≤120.0)
+4. **Controller state**: "Acting" since the system needs to react
+5. **Emergency action**: Brake with response time 0.8 seconds (≤1.0, satisfying FastResponse constraint)
+6. **Safety constraints**: 
+   - Distance constraint (threshold 10.0 meters) - obstacle is within this range
+   - Timing constraint (threshold 1.0 seconds) - not critical (isCritical="false"), so doesn't need to satisfy CriticalTiming constraint
+7. **Operating mode**: Emergency (since there's imminent danger)
+8. **No environment conditions specified**: The requirement doesn't mention any environmental factors
+
+The model represents a safe reaction to radar detection while acknowledging the camera's lack of detection, which could represent sensor disagreement or different detection capabilities.

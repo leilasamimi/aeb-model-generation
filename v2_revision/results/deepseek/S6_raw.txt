@@ -1,0 +1,61 @@
+Based on the requirement "If something is too close, react quickly," I will create a model that interprets "too close" as a short detection distance and "react quickly" as a fast emergency action (brake). I'll assume a generic obstacle and default values where necessary.
+
+```xml
+<?xml version="1.0" encoding="UTF-8"?>
+<aEBsystem:AEBSystem
+    xmi:version="2.0"
+    xmlns:xmi="http://www.omg.org/XMI"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:aEBsystem="http://www.example.org/aEBsystem"
+    xsi:schemaLocation="http://www.example.org/aEBsystem aEBsystem.ecore"
+    systemID="AEB006"
+    operatingMode="Emergency">
+  <sensors
+      range="5.0"
+      accuracy="95.0">
+    <detectionEvents
+        timestamp="1698765480"
+        distance="2.0"
+        confidence="85.0">
+      <obstacle
+          speed="15.0"
+          size="3.0"/>
+    </detectionEvents>
+  </sensors>
+  <controller
+      state="Acting"
+      decisionLatency="0.05">
+    <actions
+        responseTime="0.2"
+        priority="1"
+        executedBy="//@actuators.0"/>
+    <constraints
+        threshold="0.2"
+        isCritical="true"
+        appliesTo="//@controller/@actions.0"/>
+  </controller>
+  <actuators
+      maxForce="1000.0"
+      status="true"
+      actions="//@controller/@actions.0"/>
+</aEBsystem:AEBSystem>
+```
+
+**Explanation of design choices:**
+
+1. **Interpretation of "too close":** I used a detection distance of 2.0 meters (well within the sensor's 5.0 meter range) to represent a dangerously close obstacle.
+
+2. **Interpretation of "react quickly":** I used a very fast emergency brake response time of 0.2 seconds, which satisfies the "FastResponse" constraint (≤ 1.0 seconds).
+
+3. **Critical Timing Constraint:** Since the response is very fast (0.2 seconds), I added a critical timing constraint with threshold=0.2, which satisfies the "CriticalTiming" constraint (≤ 0.5 seconds when isCritical=true).
+
+4. **Operating Mode:** Set to "Emergency" since the system is actively reacting to a close obstacle.
+
+5. **Default Values:** Used generic values for obstacle speed/size, sensor accuracy, and actuator force where the requirement didn't specify details.
+
+6. **Constraints Compliance:**
+   - FastResponse: 0.2 ≤ 1.0 ✓
+   - CriticalTiming: 0.2 ≤ 0.5 ✓
+   - SpeedRange: Vehicle speed 15.0 ≤ 120.0 ✓
+
+The model represents an AEB system detecting an obstacle at 2 meters and initiating a brake action within 0.2 seconds, which aligns with the requirement's intent of quick reaction to proximity.

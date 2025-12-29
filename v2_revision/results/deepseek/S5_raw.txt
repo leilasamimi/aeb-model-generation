@@ -1,0 +1,84 @@
+```xml
+<?xml version="1.0" encoding="UTF-8"?>
+<aEBsystem:AEBSystem
+    xmi:version="2.0"
+    xmlns:xmi="http://www.omg.org/XMI"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:aEBsystem="http://www.example.org/aEBsystem"
+    xsi:schemaLocation="http://www.example.org/aEBsystem aEBsystem.ecore"
+    systemID="AEB006">
+  <sensors
+      range="20.0"
+      accuracy="95.0">
+    <detectionEvents
+        timestamp="1698765480"
+        distance="14.0"
+        confidence="91.0">
+      <obstacle
+          speed="40.0"
+          size="4.5"/>
+    </detectionEvents>
+  </sensors>
+  <controller
+      state="Acting"
+      decisionLatency="0.2">
+    <actions
+        actionType="Steer"
+        responseTime="1.0"
+        priority="2"
+        executedBy="//@actuators.0"/>
+    <constraints
+        constraintType="Distance"
+        threshold="15.0"
+        appliesTo="//@controller/@actions.0"/>
+  </controller>
+  <actuators
+      type="Steering"
+      maxForce="600.0"
+      status="true"
+      actions="//@controller/@actions.0"/>
+</aEBsystem:AEBSystem>
+```
+
+**Explanation:**
+
+1. **AEBSystem**: Created with systemID "AEB006" (operatingMode defaults to Normal since not specified).
+
+2. **Sensor**: 
+   - Range set to 20.0 meters (exceeds the 15m detection requirement)
+   - Accuracy set to 95.0%
+   - Contains one DetectionEvent with distance 14.0m (< 15m requirement)
+
+3. **DetectionEvent**:
+   - Timestamp: arbitrary value
+   - Distance: 14.0 meters (within the 15m requirement)
+   - Confidence: 91.0%
+   - Contains an Obstacle with speed 40.0 (valid for Vehicle type) and size 4.5
+
+4. **Controller**:
+   - State: "Acting" (since steering action is required)
+   - DecisionLatency: 0.2 seconds
+   - Contains one EmergencyAction of type "Steer" with responseTime 1.0 second
+   - Contains one SafetyConstraint of type "Distance" with threshold 15.0 meters
+
+5. **EmergencyAction**:
+   - actionType: "Steer" (as specified in requirement)
+   - responseTime: 1.0 second (as specified, satisfies FastResponse constraint ≤1.0)
+   - priority: 2 (steering typically lower priority than braking)
+   - executedBy: references the steering actuator
+
+6. **SafetyConstraint**:
+   - constraintType: "Distance" (since requirement specifies distance threshold)
+   - threshold: 15.0 meters (as specified in requirement)
+   - isCritical: not specified (defaults to false, so CriticalTiming constraint doesn't apply)
+
+7. **Actuator**:
+   - type: "Steering" (matches the steer action)
+   - maxForce: 600.0 (reasonable value for steering)
+   - status: true (active)
+   - actions: references the steer emergency action
+
+The model satisfies all metamodel constraints:
+- SpeedRange: Obstacle speed 40.0 ≤ 120.0 (assuming Vehicle type)
+- FastResponse: responseTime 1.0 ≤ 1.0
+- CriticalTiming: Not applicable since isCritical is not true

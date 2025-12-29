@@ -1,0 +1,57 @@
+<aEBsystem:AEBSystem
+    xmi:version="2.0"
+    xmlns:xmi="http://www.omg.org/XMI"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:aEBsystem="http://www.example.org/aEBsystem"
+    xsi:schemaLocation="http://www.example.org/aEBsystem aEBsystem.ecore"
+    systemID="AEB006"
+    operatingMode="Emergency">
+    
+  <!-- Radar sensor detects obstacle -->
+  <sensors 
+      sensorType="Radar"
+      range="15.0"
+      accuracy="92.0">
+    <detectionEvents
+        timestamp="1698765480"
+        distance="9.0"
+        confidence="85.0">
+      <obstacle
+          obstacleType="Vehicle"
+          speed="40.0"
+          size="4.5"/>
+    </detectionEvents>
+  </sensors>
+  
+  <!-- Camera sensor (no detection events) -->
+  <sensors 
+      sensorType="Camera"
+      range="12.0"
+      accuracy="88.0"/>
+  
+  <controller
+      state="Acting"
+      decisionLatency="0.15">
+    <actions
+        responseTime="0.8"
+        priority="1"
+        executedBy="//@actuators.0"/>
+    <constraints
+        constraintType="Distance"
+        threshold="10.0"
+        isCritical="false"
+        appliesTo="//@controller/@actions.0"/>
+    <constraints
+        constraintType="Timing"
+        threshold="1.0"
+        isCritical="false"
+        appliesTo="//@controller/@actions.0"/>
+  </controller>
+  
+  <actuators
+      type="Brake"
+      maxForce="1000.0"
+      status="true"
+      actions="//@controller/@actions.0"/>
+      
+</aEBsystem:AEBSystem>

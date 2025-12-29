@@ -1,0 +1,73 @@
+Looking at the requirement, I need to model a scenario where the brake actuator is unavailable, so the system should prefer steering or warning actions instead. I'll create an AEB system with a detection event, but configure it to use steering as the primary emergency action since braking is unavailable.
+
+```xml
+<?xml version="1.0" encoding="UTF-8"?>
+<aEBsystem:AEBSystem
+    xmi:version="2.0"
+    xmlns:xmi="http://www.omg.org/XMI"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:aEBsystem="http://www.example.org/aEBsystem"
+    xsi:schemaLocation="http://www.example.org/aEBsystem aEBsystem.ecore"
+    systemID="AEB006"
+    operatingMode="Emergency">
+  <sensors sensorType="Radar"
+      range="15.0"
+      accuracy="92.0">
+    <detectionEvents
+        timestamp="1698765480"
+        distance="12.0"
+        confidence="85.0">
+      <obstacle
+          obstacleType="Vehicle"
+          speed="45.0"
+          size="4.5"/>
+    </detectionEvents>
+  </sensors>
+  <controller
+      state="Acting"
+      decisionLatency="0.15">
+    <actions
+        actionType="Steer"
+        responseTime="0.8"
+        priority="1"
+        executedBy="//@actuators.0"/>
+    <constraints
+        constraintType="Distance"
+        threshold="12.0"
+        appliesTo="//@controller/@actions.0"/>
+  </controller>
+  <actuators
+      type="Steering"
+      maxForce="600.0"
+      status="true"
+      actions="//@controller/@actions.0"/>
+  <actuators
+      type="Brake"
+      maxForce="1000.0"
+      status="false"/>
+</aEBsystem:AEBSystem>
+```
+
+**Explanation of the model:**
+
+1. **AEBSystem**: System ID "AEB006" with operating mode set to "Emergency" since an obstacle is detected.
+
+2. **Sensor**: Radar sensor with 15m range and 92% accuracy, containing a detection event.
+
+3. **DetectionEvent**: Obstacle detected at 12m distance with 85% confidence. The obstacle is a vehicle traveling at 45 km/h (within the Vehicle speed constraint of ≤120.0).
+
+4. **Controller**: In "Acting" state with decision latency of 0.15 seconds. It contains:
+   - **EmergencyAction**: Steering action with response time of 0.8 seconds (≤1.0, satisfying FastResponse constraint), priority 1, executed by the steering actuator.
+   - **SafetyConstraint**: Distance constraint with threshold of 12.0 meters applied to the steering action.
+
+5. **Actuators**:
+   - Steering actuator: Available (status=true) with max force of 600.0, configured to execute the steering action.
+   - Brake actuator: Unavailable (status=false) as specified in the requirement.
+
+**Key compliance points:**
+- The model follows the metamodel structure with all required elements
+- Vehicle speed (45.0) ≤ 120.0 (SpeedRange constraint)
+- Response time (0.8) ≤ 1.0 (FastResponse constraint)
+- Brake actuator is marked as unavailable (status=false)
+- System uses steering action instead of braking as required
+- All references between elements are properly established
