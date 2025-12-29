@@ -1,0 +1,58 @@
+Based on the provided requirement "If an obstacle is detected within 10 meters, brake in 0.5 seconds," and adhering to the AEB metamodel structure and constraints, the following XMI model is generated. The model includes necessary elements such as `AEBSystem`, `Sensor`, `DetectionEvent`, `Obstacle`, `Controller`, `EmergencyAction`, `SafetyConstraint`, and `Actuator`, with values set to comply with the metamodel constraints (e.g., `responseTime <= 1.0` for `EmergencyAction`, `threshold <= 0.5` for critical timing constraints).
+
+```xml
+<?xml version="1.0" encoding="UTF-8"?>
+<aEBsystem:AEBSystem
+    xmi:version="2.0"
+    xmlns:xmi="http://www.omg.org/XMI"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:aEBsystem="http://www.example.org/aEBsystem"
+    xsi:schemaLocation="http://www.example.org/aEBsystem aEBsystem.ecore"
+    systemID="AEB006"
+    operatingMode="Emergency">
+  <sensors sensorType="Radar"
+      range="15.0"
+      accuracy="93.0">
+    <detectionEvents
+        timestamp="1698765480"
+        distance="9.5"
+        confidence="89.0">
+      <obstacle
+          obstacleType="Vehicle"
+          speed="25.0"
+          size="4.5"/>
+    </detectionEvents>
+  </sensors>
+  <controller
+      state="Acting"
+      decisionLatency="0.1">
+    <actions
+        actionType="Brake"
+        responseTime="0.5"
+        priority="1"
+        executedBy="//@actuators.0"/>
+    <constraints
+        constraintType="Timing"
+        threshold="0.5"
+        isCritical="true"
+        appliesTo="//@controller/@actions.0"/>
+  </controller>
+  <actuators
+      type="Brake"
+      maxForce="1000.0"
+      status="true"
+      actions="//@controller/@actions.0"/>
+</aEBsystem:AEBSystem>
+```
+
+### Explanation:
+1. **AEBSystem**: Assigned a unique `systemID="AEB006"` and set `operatingMode="Emergency"` since the requirement involves a critical response to an obstacle detection.
+2. **Sensor**: Configured with `sensorType="Radar"`, a reasonable `range="15.0"` meters (covering the 10-meter detection requirement), and `accuracy="93.0"`.
+3. **DetectionEvent**: Set `distance="9.5"` meters (within the 10-meter threshold as per the requirement), with a realistic `timestamp` and `confidence="89.0"`.
+4. **Obstacle**: Defined as a `Vehicle` with `speed="25.0"` (within the constraint `Vehicle speed <= 120.0`) and `size="4.5"`.
+5. **Controller**: Set to `state="Acting"` to reflect active response, with a low `decisionLatency="0.1"` seconds.
+6. **EmergencyAction**: Configured with `actionType="Brake"`, `responseTime="0.5"` seconds (as per requirement and within `responseTime <= 1.0` constraint), and `priority="1"` for high urgency.
+7. **SafetyConstraint**: Set as `constraintType="Timing"`, with `threshold="0.5"` (complying with `threshold <= 0.5` for critical timing) and `isCritical="true"`, linked to the brake action.
+8. **Actuator**: Defined as `type="Brake"`, with `maxForce="1000.0"` and `status="true"`, linked to the brake action.
+
+This model is consistent with the AEB metamodel structure, satisfies all specified constraints, and directly addresses the given requirement.
