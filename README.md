@@ -15,17 +15,21 @@ The goal of this revision is to support the paper’s enhanced evaluation pipeli
 ## Contents
 
 - **Prompts/**  
-  Few-shot learning prompts used to generate AEB models from natural-language driving scenarios.
-
-- **Models/**  
+  Few-shot and base prompt templates used to generate AEB models in XMI format from natural-language driving scenarios.
+- **scenarios/** 
+  Structured descriptions of the driving scenarios used in the evaluation, provided in JSON format.
+ - **metamodel/**  
+  EMF metamodel definitions for the Autonomous Emergency Braking (AEB) system, serving as the structural basis for model generation and validation.
+- **EGL/**  
+  Epsilon Validation Language (EVL) rules used for rule-based validation and semantic consistency checking of the generated AEB models.
+- **EGL/**  
+  Epsilon Generation Language (EGL) scripts used to transform generated XMI models into UPPAAL-compatible XML specifications.
+- **uppaal/**  
+  Some examples of UPPAAL generated models.
+- **experiments/**
+  Configuration files and auxiliary artifacts related to the execution of the experimental pipeline across different scenarios and LLMs. 
+- **results/**  
   Generated XMI models for each evaluation scenario, produced by three different LLMs (DeepSeek, GPT-4, Grok-3).
-
-- **Evaluation/**  
-  Artifacts related to the rule-based comparative evaluation, including summary tables and analysis data.
-
-- **Scripts/**  
-  Python helper scripts for running prompt-based model generation and performing rule-based evaluation.
-
 ---
 
 ## Overview of Key Components
