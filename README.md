@@ -42,5 +42,30 @@ EGL (Epsilon Generation Language) templates automatically convert validated EMF-
 ### Formal Verification with UPPAAL
 The generated UPPAAL models are verified against representative timing and safety properties. The evaluation focuses on methodological feasibility rather than exhaustive industrial-grade automotive analysis.
 
+---
+## Evaluation Approach
+
+The revised evaluation:
+
+* Uses 13 diverse driving scenarios.
+* Compares three LLMs (DeepSeek, GPT-4, Grok-3).
+* Applies a rule-based evaluation framework (structural, semantic, behavioral).
+* Replaces precision/recall-style metrics with interpretable rule satisfaction tables.
+* Provides aggregated comparative scores across models.
+
+---
+
+## Notes
+
+* All models are generated automatically without manual correction.
+* EVL constraints are used exclusively for model validation.
+* UPPAAL verification demonstrates feasibility and consistency rather than full industrial deployment.
+
+---
+
+## License
+
+This repository is intended for academic and research use. Usage is subject to the terms of the associated manuscript and applicable API licenses.
+
 
 
