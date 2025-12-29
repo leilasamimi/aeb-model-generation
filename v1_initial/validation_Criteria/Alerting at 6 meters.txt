@@ -1,0 +1,72 @@
+### Expected Characteristics of a Valid XMI Model for the Requirement: "Obstacle within 6 meters, warn in 0.3 seconds"
+
+- **Classes**:
+  - AEBSystem
+  - Sensor
+  - Controller
+  - EmergencyAction
+  - SafetyConstraint
+  - Actuator
+  - DetectionEvent
+  - Obstacle
+
+- **Attributes**:
+  - **AEBSystem**:
+    - systemID: Unique string identifier (e.g., "AEB014")
+    - operatingMode: "Emergency" (due to active warning response)
+  - **Sensor**:
+    - sensorType: One of "Radar", "Lidar", or "Camera" (e.g., "Camera")
+    - range: Double >= 6.0 (to detect obstacle within 6 meters)
+    - accuracy: Float between 0.0 and 100.0 (e.g., 92.0)
+  - **Controller**:
+    - state: "Acting" (as the system is executing a warning action)
+    - decisionLatency: Double > 0.0 (e.g., 0.06)
+  - **EmergencyAction**:
+    - actionType: "Warn"
+    - responseTime: 0.3 (as specified)
+    - priority: Integer >= 1 (e.g., 2 for warning)
+  - **SafetyConstraint**:
+    - constraintType: "Timing"
+    - threshold: 0.3 (matches responseTime)
+    - isCritical: true (due to CriticalTiming constraint)
+  - **Actuator**:
+    - type: "Horn"
+    - maxForce: Double >= 0.0 or omitted (e.g., 0.0, as horn may not require force)
+    - status: true (actuator is operational)
+  - **DetectionEvent**:
+    - timestamp: Long > 0 (e.g., current timestamp like 1698765560)
+    - distance: Double <= 6.0 (e.g., 5.5)
+    - confidence: Float between 0.0 and 100.0 (e.g., 85.0)
+  - **Obstacle**:
+    - obstacleType: One of "Vehicle", "Pedestrian", or "Static" (e.g., "Static")
+    - speed: Double (e.g., 0.0 for Static, or <= 30.0 for Pedestrian, <= 120.0 for Vehicle)
+    - size: Double > 0.0 (e.g., 2.0)
+
+- **Relationships**:
+  - AEBSystem contains:
+    - One Sensor
+    - One Controller
+    - One Actuator
+  - Sensor contains:
+    - One DetectionEvent
+  - DetectionEvent contains:
+    - One Obstacle
+  - Controller contains:
+    - One EmergencyAction
+    - One SafetyConstraint
+  - EmergencyAction:
+    - executedBy: References the Actuator (e.g., "//@actuators.0")
+  - SafetyConstraint:
+    - appliesTo: References the EmergencyAction (e.g., "//@controller/@actions.0")
+  - Actuator:
+    - actions: References the EmergencyAction (e.g., "//@controller/@actions.0")
+
+- **Constraint Compliance**:
+  - **SpeedRange**:
+    - If obstacleType is "Pedestrian", speed <= 30.0
+    - If obstacleType is "Vehicle", speed <= 120.0
+    - If obstacleType is "Static", speed = 0.0 (implicitly satisfied)
+  - **FastResponse**:
+    - EmergencyAction responseTime = 0.3 <= 1.0 (satisfied)
+  - **CriticalTiming**:
+    - SafetyConstraint with isCritical = true has threshold = 0.3 <= 0.5 (satisfied)
