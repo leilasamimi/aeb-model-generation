@@ -1,0 +1,84 @@
+```xml
+<?xml version="1.0" encoding="UTF-8"?>
+<aEBsystem:AEBSystem
+    xmi:version="2.0"
+    xmlns:xmi="http://www.omg.org/XMI"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:aEBsystem="http://www.example.org/aEBsystem"
+    xsi:schemaLocation="http://www.example.org/aEBsystem aEBsystem.ecore"
+    systemID="AEB001"
+    operatingMode="Emergency">
+    
+  <sensors
+      sensorType="Radar"
+      range="15.0"
+      accuracy="95.0">
+    <detectionEvents
+        timestamp="1698765432"
+        distance="8.0"
+        confidence="90.0">
+      <obstacle
+          obstacleType="Vehicle"
+          speed="50.0"
+          size="4.5"/>
+    </detectionEvents>
+  </sensors>
+  
+  <controller
+      state="Acting"
+      decisionLatency="0.1">
+    <actions
+        actionType="Brake"
+        responseTime="0.5"
+        priority="1"
+        executedBy="//@actuators.0"/>
+    <constraints
+        constraintType="Timing"
+        threshold="0.5"
+        isCritical="true"
+        appliesTo="//@controller/@actions.0"/>
+  </controller>
+  
+  <actuators
+      type="Brake"
+      maxForce="1200.0"
+      status="true"
+      actions="//@controller/@actions.0"/>
+      
+</aEBsystem:AEBSystem>
+```
+
+**Explanation of compliance with the metamodel and constraints:**
+
+1. **AEBSystem Structure:**
+   - Contains required components: Sensor, Controller, Actuator
+   - `systemID` and `operatingMode` specified (Emergency mode since braking action is triggered)
+
+2. **Sensor Configuration:**
+   - `sensorType` specified as Radar (could also be Lidar or Camera)
+   - `range` set to 15.0 meters (exceeds the 10m detection requirement)
+   - Contains a `DetectionEvent` with distance 8.0m (< 10m requirement)
+   - DetectionEvent contains an Obstacle with valid speed (50.0 ≤ 120.0 for Vehicle type)
+
+3. **Controller Configuration:**
+   - `state` is "Acting" (since emergency action is being taken)
+   - Contains an `EmergencyAction` of type "Brake" with `responseTime` 0.5 seconds
+   - Contains a `SafetyConstraint` of type "Timing" with threshold 0.5 seconds
+
+4. **Constraint Compliance:**
+   - **SpeedRange constraint**: Vehicle obstacle speed 50.0 ≤ 120.0 ✓
+   - **FastResponse constraint**: EmergencyAction responseTime 0.5 ≤ 1.0 ✓
+   - **CriticalTiming constraint**: Timing constraint with isCritical=true has threshold 0.5 ≤ 0.5 ✓
+
+5. **Actuator Configuration:**
+   - `type` specified as "Brake" matching the actionType
+   - Linked to the EmergencyAction via the `actions` reference
+   - `status` is true (operational)
+
+6. **References and Relationships:**
+   - EmergencyAction `executedBy` references the Actuator
+   - Actuator `actions` references the EmergencyAction
+   - SafetyConstraint `appliesTo` references the EmergencyAction
+   - All XPath references use correct syntax (//@controller/@actions.0, //@actuators.0)
+
+The model fully implements the requirement "If an obstacle is detected within 10 meters, brake in 0.5 seconds" with a concrete scenario where a vehicle obstacle is detected at 8 meters, triggering a braking action with 0.5 second response time.
