@@ -1,0 +1,121 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE nta PUBLIC '-//Uppaal Team//DTD Flat System 1.6//EN' 'http://www.it.uu.se/research/group/darts/uppaal/flat-1_6.dtd'>
+<nta>
+	<declaration>
+chan detect;
+chan stopForce;
+chan Brake;
+clock t;
+</declaration>
+	<template>
+		<name>AEB_Controller</name>
+		<declaration>
+int threshold = 5;
+  </declaration>
+		<location id="id0" x="0" y="0">
+			<name x="-10" y="-30">Idle</name>
+		</location>
+		<location id="id1" x="200" y="0">
+			<name x="190" y="-30">Assess</name>
+		</location>
+		<location id="id2" x="400" y="0">
+			<name x="390" y="-30">Act</name>
+			<urgent/>
+		</location>
+		<init ref="id0"/>
+		<transition id="id3">
+			<source ref="id0"/>
+			<target ref="id1"/>
+			<label kind="guard" x="40" y="-30">t &lt;= 1</label>
+			<label kind="synchronisation" x="40" y="-15">detect?</label>
+			<label kind="assignment" x="40" y="0">t = 0</label>
+		</transition>
+		<transition id="id4">
+			<source ref="id1"/>
+			<target ref="id2"/>
+			<label kind="guard" x="240" y="-30">t &lt;= 5
+      &amp;&amp; threshold &lt;= 5</label>
+			<label kind="synchronisation" x="240" y="-15">Brake!</label>
+			<label kind="assignment" x="240" y="0">t = 0</label>
+		</transition>
+	</template>
+	<template>
+		<name>Sensor_Radar</name>
+		<declaration>
+int range = 10;
+int accuracy = 95;
+int distance = 8;
+int confidence = 90;
+int obstacleSpeed = 20;
+int obstacleSize = 4;
+  </declaration>
+		<location id="id5" x="0" y="0">
+			<name x="-10" y="-30">Waiting</name>
+		</location>
+		<location id="id6" x="150" y="0">
+			<name x="140" y="-30">Detecting</name>
+		</location>
+		<init ref="id5"/>
+		<transition id="id7">
+			<source ref="id5"/>
+			<target ref="id6"/>
+			<label kind="guard" x="15" y="-30">range &gt; 0 &amp;&amp; distance &lt; range &amp;&amp; confidence &gt;= 90 &amp;&amp; obstacleSpeed &gt;= 0</label>
+			<label kind="synchronisation" x="15" y="-15">detect!</label>
+		</transition>
+	</template>
+	<template>
+		<name>Actuator_Brake</name>
+		<declaration>
+int maxForce = 1000;
+bool status = true;
+  </declaration>
+		<location id="id8" x="0" y="0">
+			<name x="-10" y="-30">Idle</name>
+		</location>
+		<location id="id9" x="150" y="0">
+			<name x="140" y="-30">Acting</name>
+		</location>
+		<init ref="id8"/>
+		<transition id="id10">
+			<source ref="id8"/>
+			<target ref="id9"/>
+			<label kind="guard" x="15" y="-30">status == true</label>
+			<label kind="synchronisation" x="15" y="-15">Brake?</label>
+		</transition>
+		<transition id="id11">
+			<source ref="id9"/>
+			<target ref="id8"/>
+			<label kind="synchronisation" x="15" y="-15">stopForce?</label>
+		</transition>
+	</template>
+	<system>
+AEB = AEB_Controller();
+Radar = Sensor_Radar();
+Brake1= Actuator_Brake();
+system AEB, Radar, Brake1;
+</system>
+	<queries>
+		<option key="--diagnostic" value="0"/>
+		<query>
+			<formula>A[] not (Radar.distance &lt;= 0 and AEB.Act == false)</formula>
+			<comment/>
+			<result outcome="success" type="quality" timestamp="2025-06-20 18:54:27 +0330">
+				<option key="--diagnostic" value="0"/>
+			</result>
+		</query>
+		<query>
+			<formula>E&lt;&gt; Radar.Detecting and AEB.Act</formula>
+			<comment/>
+			<result outcome="success" type="quality" timestamp="2025-06-20 18:54:31 +0330">
+				<option key="--diagnostic" value="0"/>
+			</result>
+		</query>
+		<query>
+			<formula>A[] AEB.Act imply t &lt;= 5</formula>
+			<comment/>
+			<result outcome="success" type="quality" timestamp="2025-06-20 18:54:34 +0330">
+				<option key="--diagnostic" value="0"/>
+			</result>
+		</query>
+	</queries>
+</nta>

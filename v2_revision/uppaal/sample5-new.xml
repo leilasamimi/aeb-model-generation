@@ -1,0 +1,152 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE nta PUBLIC '-//Uppaal Team//DTD Flat System 1.6//EN' 'http://www.it.uu.se/research/group/darts/uppaal/flat-1_6.dtd'>
+<nta>
+	<declaration>
+chan detect;
+chan stopForce;
+chan Brake;
+chan Warn;
+clock t;
+</declaration>
+	<template>
+		<name>AEB_Controller</name>
+		<declaration>
+int threshold = 4;
+  </declaration>
+		<location id="id0" x="0" y="0">
+			<name x="-10" y="-30">Idle</name>
+		</location>
+		<location id="id1" x="200" y="0">
+			<name x="190" y="-30">Assess</name>
+		</location>
+		<location id="id2" x="400" y="0">
+			<name x="390" y="-30">Act</name>
+			<urgent/>
+		</location>
+		<init ref="id0"/>
+		<transition id="id3">
+			<source ref="id0"/>
+			<target ref="id1"/>
+			<label kind="guard" x="40" y="-30">t &lt;= 1</label>
+			<label kind="synchronisation" x="40" y="-15">detect?</label>
+			<label kind="assignment" x="40" y="0">t = 0</label>
+		</transition>
+		<transition id="id4">
+			<source ref="id1"/>
+			<target ref="id2"/>
+			<label kind="guard" x="240" y="-30">t &lt;= 4
+      &amp;&amp; threshold &lt;= 4</label>
+			<label kind="synchronisation" x="240" y="-15">Brake!</label>
+			<label kind="assignment" x="240" y="0">t = 0</label>
+		</transition>
+		<transition id="id5">
+			<source ref="id1"/>
+			<target ref="id2"/>
+			<label kind="guard" x="240" y="-30">t &lt;= 4
+      &amp;&amp; threshold &lt;= 4</label>
+			<label kind="synchronisation" x="240" y="-15">Warn!</label>
+			<label kind="assignment" x="240" y="0">t = 0</label>
+		</transition>
+	</template>
+	<template>
+		<name>Sensor_Camera</name>
+		<declaration>
+int range = 10;
+int accuracy = 90;
+int distance = 7;
+int confidence = 88;
+int obstacleSpeed = 8;
+int obstacleSize = 2;
+  </declaration>
+		<location id="id6" x="0" y="0">
+			<name x="-10" y="-30">Waiting</name>
+		</location>
+		<location id="id7" x="150" y="0">
+			<name x="140" y="-30">Detecting</name>
+		</location>
+		<init ref="id6"/>
+		<transition id="id8">
+			<source ref="id6"/>
+			<target ref="id7"/>
+			<label kind="guard" x="15" y="-30">range &gt; 0 &amp;&amp; distance &lt; range &amp;&amp; confidence &gt;= 88 &amp;&amp; obstacleSpeed &gt;= 0</label>
+			<label kind="synchronisation" x="15" y="-15">detect!</label>
+		</transition>
+	</template>
+	<template>
+		<name>Actuator_Brake</name>
+		<declaration>
+int maxForce = 1100;
+bool status = true;
+  </declaration>
+		<location id="id9" x="0" y="0">
+			<name x="-10" y="-30">Idle</name>
+		</location>
+		<location id="id10" x="150" y="0">
+			<name x="140" y="-30">Acting</name>
+		</location>
+		<init ref="id9"/>
+		<transition id="id11">
+			<source ref="id9"/>
+			<target ref="id10"/>
+			<label kind="guard" x="15" y="-30">status == true</label>
+			<label kind="synchronisation" x="15" y="-15">Brake?</label>
+		</transition>
+		<transition id="id12">
+			<source ref="id10"/>
+			<target ref="id9"/>
+			<label kind="synchronisation" x="15" y="-15">stopForce?</label>
+		</transition>
+	</template>
+	<template>
+		<name>Actuator_Warn</name>
+		<declaration>
+int maxForce = 0;
+bool status = true;
+  </declaration>
+		<location id="id13" x="0" y="0">
+			<name x="-10" y="-30">Idle</name>
+		</location>
+		<location id="id14" x="150" y="0">
+			<name x="140" y="-30">Acting</name>
+		</location>
+		<init ref="id13"/>
+		<transition id="id15">
+			<source ref="id13"/>
+			<target ref="id14"/>
+			<label kind="guard" x="15" y="-30">status == true</label>
+			<label kind="synchronisation" x="15" y="-15">Warn?</label>
+		</transition>
+		<transition id="id16">
+			<source ref="id14"/>
+			<target ref="id13"/>
+			<label kind="synchronisation" x="15" y="-15">stopForce?</label>
+		</transition>
+	</template>
+	<system>
+AEB = AEB_Controller();
+Camera = Sensor_Camera();
+Brake1= Actuator_Brake();
+Warn2= Actuator_Warn();
+system AEB, Camera, Brake1, Warn2;
+</system>
+	<queries>
+		<query>
+			<formula>A[] not (Camera.distance &lt;= 0 and AEB.Act == false)</formula>
+			<comment/>
+			<result outcome="success" type="quality" timestamp="2025-06-20 19:03:29 +0330">
+			</result>
+		</query>
+		<query>
+			<formula>E&lt;&gt; Camera.Detecting and AEB.Act</formula>
+			<comment/>
+			<result outcome="success" type="quality" timestamp="2025-06-20 19:03:31 +0330">
+			</result>
+		</query>
+		<query>
+			<formula>A[] AEB.Act imply t &lt;= 4</formula>
+			<comment/>
+			<result outcome="success" type="quality" timestamp="2025-06-20 19:03:33 +0330">
+			</result>
+		</query>
+	</queries>
+</nta>
