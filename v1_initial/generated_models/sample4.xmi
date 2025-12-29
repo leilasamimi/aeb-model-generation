@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<aEBsystem:AEBSystem xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:aEBsystem="http://www.example.org/aEBsystem" systemID="AEB004">
+  <sensors range="20.0" accuracy="96.0">
+    <detectionEvents timestamp="1698765460" distance="14.0" confidence="92.0">
+      <obstacle speed="30.0" size="5.0"/>
+    </detectionEvents>
+  </sensors>
+  <controller state="Acting" dicisionLatency="0.3">
+    <actions actionType="Steer" responseTime="1.0" priority="3" executedBy="//@actuators.0"/>
+    <constraints constraintType="Distance" threshold="15.0" appliesTo="//@controller/@actions.0"/>
+  </controller>
+  <actuators type="Steering" maxForce="500.0" status="true" actions="//@controller/@actions.0"/>
+</aEBsystem:AEBSystem>
