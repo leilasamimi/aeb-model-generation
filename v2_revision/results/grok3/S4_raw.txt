@@ -1,0 +1,57 @@
+Based on the given requirement "If an obstacle is detected within 6 meters, warn in 0.3 seconds," and ensuring compliance with the AEB metamodel structure and constraints, the following XMI model is generated. The model adheres to the constraints such as `FastResponse` (responseTime <= 1.0) and includes necessary elements like `Sensor`, `DetectionEvent`, `Controller`, `EmergencyAction`, `Actuator`, and `SafetyConstraint`.
+
+```xml
+<?xml version="1.0" encoding="UTF-8"?>
+<aEBsystem:AEBSystem
+    xmi:version="2.0"
+    xmlns:xmi="http://www.omg.org/XMI"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:aEBsystem="http://www.example.org/aEBsystem"
+    xsi:schemaLocation="http://www.example.org/aEBsystem aEBsystem.ecore"
+    systemID="AEB006"
+    operatingMode="Emergency">
+  <sensors sensorType="Radar"
+      range="8.0"
+      accuracy="92.0">
+    <detectionEvents
+        timestamp="1698765480"
+        distance="5.5"
+        confidence="85.0">
+      <obstacle
+          obstacleType="Static"
+          speed="0.0"
+          size="3.0"/>
+    </detectionEvents>
+  </sensors>
+  <controller
+      state="Acting"
+      decisionLatency="0.1">
+    <actions
+        actionType="Warn"
+        responseTime="0.3"
+        priority="2"
+        executedBy="//@actuators.0"/>
+    <constraints
+        constraintType="Timing"
+        threshold="0.3"
+        isCritical="true"
+        appliesTo="//@controller/@actions.0"/>
+  </controller>
+  <actuators
+      type="Horn"
+      maxForce="0.0"
+      status="true"
+      actions="//@controller/@actions.0"/>
+</aEBsystem:AEBSystem>
+```
+
+### Explanation of the Model:
+1. **AEBSystem**: Assigned a unique `systemID="AEB006"` and set `operatingMode="Emergency"` to reflect the urgency of the situation as an obstacle is detected within a close range (6 meters).
+2. **Sensor**: Configured with `sensorType="Radar"`, a reasonable `range="8.0"` meters (covering the detection requirement of 6 meters), and `accuracy="92.0"` to indicate reliable detection.
+3. **DetectionEvent**: Set `distance="5.5"` meters (less than 6 meters as per requirement), with a `timestamp="1698765480"` and `confidence="85.0"`. It includes an `Obstacle` of type `Static` with `speed="0.0"` and `size="3.0"`.
+4. **Controller**: Set to `state="Acting"` to indicate active response to the detection, with a low `decisionLatency="0.1"` seconds for quick processing.
+5. **EmergencyAction**: Defined as `actionType="Warn"` with `responseTime="0.3"` seconds (meeting the requirement and adhering to the `FastResponse` constraint of <= 1.0 seconds), and `priority="2"` to reflect a warning action.
+6. **SafetyConstraint**: Set as `constraintType="Timing"`, with `threshold="0.3"` and `isCritical="true"` (complying with `CriticalTiming` constraint of threshold <= 0.5 for critical timing constraints), applied to the warning action.
+7. **Actuator**: Configured as `type="Horn"` for the warning action, with `maxForce="0.0"` (since force is irrelevant for a horn), and `status="true"` to indicate it is operational.
+
+This model ensures compliance with the AEB metamodel structure and constraints while addressing the specific requirement of warning within 0.3 seconds for an obstacle detected within 6 meters.

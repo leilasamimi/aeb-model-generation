@@ -1,0 +1,89 @@
+Based on the provided requirement, "If a pedestrian is detected within 7 meters, brake and warn in 0.4 seconds," and adhering to the AEB metamodel structure and constraints, I will generate an XMI model. The model will be similar to Example 4, as it matches the requirement closely, with necessary adjustments to ensure compliance with the metamodel constraints (e.g., FastResponse: responseTime <= 1.0, CriticalTiming: threshold <= 0.5 for critical constraints, and SpeedRange for pedestrian speed <= 30.0).
+
+Here is the XMI model:
+
+```xml
+<?xml version="1.0" encoding="UTF-8"?>
+<aEBsystem:AEBSystem
+    xmi:version="2.0"
+    xmlns:xmi="http://www.omg.org/XMI"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:aEBsystem="http://www.example.org/aEBsystem"
+    xsi:schemaLocation="http://www.example.org/aEBsystem aEBsystem.ecore"
+    systemID="AEB006"
+    operatingMode="Emergency">
+  <sensors sensorType="Camera"
+      range="10.0"
+      accuracy="90.0">
+    <detectionEvents
+        timestamp="1698765480"
+        distance="6.8"
+        confidence="89.0">
+      <obstacle
+          obstacleType="Pedestrian"
+          speed="5.0"
+          size="1.6"/>
+    </detectionEvents>
+  </sensors>
+  <controller
+      state="Acting"
+      decisionLatency="0.1">
+    <actions
+        actionType="Brake"
+        responseTime="0.4"
+        priority="1"
+        executedBy="//@actuators.0"/>
+    <actions
+        actionType="Warn"
+        responseTime="0.4"
+        priority="2"
+        executedBy="//@actuators.1"/>
+    <constraints
+        constraintType="Timing"
+        threshold="0.4"
+        isCritical="true"
+        appliesTo="//@controller/@actions.0 //@controller/@actions.1"/>
+  </controller>
+  <actuators
+      type="Brake"
+      maxForce="1000.0"
+      status="true"
+      actions="//@controller/@actions.0"/>
+  <actuators
+      type="Horn"
+      maxForce="0.0"
+      status="true"
+      actions="//@controller/@actions.1"/>
+</aEBsystem:AEBSystem>
+```
+
+### Explanation and Compliance with Metamodel Constraints:
+1. **AEBSystem**: 
+   - `systemID="AEB006"` is unique for this model.
+   - `operatingMode="Emergency"` reflects the critical nature of the situation (pedestrian close proximity).
+2. **Sensor**:
+   - `sensorType="Camera"` is suitable for pedestrian detection.
+   - `range="10.0"` covers the detection distance of 7 meters.
+   - `accuracy="90.0"` is a reasonable value for a camera sensor.
+3. **DetectionEvent**:
+   - `distance="6.8"` is within the required 7 meters.
+   - `timestamp` and `confidence` are set to plausible values.
+4. **Obstacle**:
+   - `obstacleType="Pedestrian"` matches the requirement.
+   - `speed="5.0"` complies with the SpeedRange constraint (<= 30.0 for pedestrians).
+   - `size="1.6"` is a reasonable value for a pedestrian.
+5. **Controller**:
+   - `state="Acting"` reflects the active response to the detection.
+   - `decisionLatency="0.1"` is a fast response time.
+6. **EmergencyAction**:
+   - Two actions are defined: `Brake` (priority 1) and `Warn` (priority 2).
+   - Both have `responseTime="0.4"`, satisfying the FastResponse constraint (<= 1.0).
+7. **SafetyConstraint**:
+   - `constraintType="Timing"` and `threshold="0.4"` with `isCritical="true"` comply with the CriticalTiming constraint (<= 0.5).
+   - `appliesTo` references both actions.
+8. **Actuator**:
+   - Two actuators are defined: `Brake` and `Horn`, each linked to the respective `EmergencyAction`.
+   - `status="true"` indicates they are operational.
+   - `maxForce` is set appropriately (`1000.0` for Brake, `0.0` for Horn as it may not require force).
+
+This model adheres to the AEB metamodel structure and constraints while fulfilling the given requirement.

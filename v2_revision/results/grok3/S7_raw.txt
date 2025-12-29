@@ -1,0 +1,80 @@
+Based on the provided requirement and adhering to the AEB metamodel structure and constraints, I have generated the following XMI model. The model accounts for multiple obstacles detected by radar and lidar sensors within 10 meters under rainy conditions, prioritizes the closest obstacle, and applies the brake within 0.4 seconds while ensuring compliance with the SpeedRange constraint (Pedestrian speed <= 30.0, Vehicle speed <= 120.0). Additionally, it respects the FastResponse constraint (responseTime <= 1.0) and CriticalTiming constraint (threshold <= 0.5 for critical timing constraints).
+
+```xml
+<?xml version="1.0" encoding="UTF-8"?>
+<aEBsystem:AEBSystem
+    xmi:version="2.0"
+    xmlns:xmi="http://www.omg.org/XMI"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:aEBsystem="http://www.example.org/aEBsystem"
+    xsi:schemaLocation="http://www.example.org/aEBsystem aEBsystem.ecore"
+    systemID="AEB006"
+    operatingMode="Emergency">
+  <sensors sensorType="Radar"
+      range="12.0"
+      accuracy="92.0">
+    <detectionEvents
+        timestamp="1698765480"
+        distance="9.5"
+        confidence="85.0">
+      <obstacle
+          obstacleType="Vehicle"
+          speed="25.0"
+          size="4.5"/>
+    </detectionEvents>
+  </sensors>
+  <sensors sensorType="Lidar"
+      range="10.0"
+      accuracy="90.0">
+    <detectionEvents
+        timestamp="1698765481"
+        distance="6.0"
+        confidence="88.0">
+      <obstacle
+          obstacleType="Pedestrian"
+          speed="5.0"
+          size="1.7"/>
+    </detectionEvents>
+  </sensors>
+  <controller
+      state="Acting"
+      decisionLatency="0.1">
+    <actions
+        actionType="Brake"
+        responseTime="0.4"
+        priority="1"
+        executedBy="//@actuators.0"/>
+    <constraints
+        constraintType="Timing"
+        threshold="0.4"
+        isCritical="true"
+        appliesTo="//@controller/@actions.0"/>
+  </controller>
+  <actuators
+      type="Brake"
+      maxForce="1300.0"
+      status="true"
+      actions="//@controller/@actions.0"/>
+  <environmentconditions
+      conditionType="Rain"
+      severity="50.0"
+      affects="//@sensors.0 //@sensors.1"/>
+</aEBsystem:AEBSystem>
+```
+
+### Explanation of the Model:
+1. **AEBSystem**: Identified with `systemID="AEB006"` and set to `operatingMode="Emergency"` due to the critical nature of the situation with multiple obstacles detected.
+2. **Sensors**: Two sensors are modeled:
+   - A Radar sensor with a range of 12.0 meters detecting an obstacle (Vehicle) at 9.5 meters.
+   - A Lidar sensor with a range of 10.0 meters detecting a closer obstacle (Pedestrian) at 6.0 meters.
+   - Both sensors have high accuracy and are affected by rainy conditions.
+3. **DetectionEvents and Obstacles**: 
+   - Radar detects a Vehicle with speed=25.0 (compliant with SpeedRange <= 120.0).
+   - Lidar detects a Pedestrian with speed=5.0 (compliant with SpeedRange <= 30.0), which is prioritized as it is the closest obstacle (6.0 meters vs. 9.5 meters).
+4. **Controller**: Set to `state="Acting"` with a low `decisionLatency="0.1"`. It contains:
+   - An `EmergencyAction` of type `Brake` with `responseTime="0.4"` (compliant with FastResponse <= 1.0) and highest `priority="1"`.
+   - A `SafetyConstraint` of type `Timing` with `threshold="0.4"` and `isCritical="true"` (compliant with CriticalTiming <= 0.5).
+5. **Actuator**: A Brake actuator with `maxForce="1300.0"` and `status="true"`, linked to the brake action.
+6. **EnvironmentCondition**: Rainy conditions with `severity="50.0"`, affecting both sensors.
+
+This model adheres to the AEB metamodel structure, satisfies all specified constraints, and addresses the requirement by prioritizing the closest obstacle (Pedestrian at 6.0 meters) and applying the brake within 0.4 seconds under rainy conditions.

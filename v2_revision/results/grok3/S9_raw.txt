@@ -1,0 +1,61 @@
+Based on the given requirement "Radar detects an obstacle at 9 meters but the camera does not. If any sensor detects imminent danger, react safely," I will generate an XMI model compliant with the AEB metamodel. The model will include two sensors (Radar and Camera), with only the Radar detecting the obstacle, and an appropriate reaction (braking) triggered by the controller due to the imminent danger detected by the Radar. The model adheres to the metamodel structure and constraints such as FastResponse (responseTime <= 1.0) and CriticalTiming (threshold <= 0.5 for critical timing constraints).
+
+```xml
+<?xml version="1.0" encoding="UTF-8"?>
+<aEBsystem:AEBSystem
+    xmi:version="2.0"
+    xmlns:xmi="http://www.omg.org/XMI"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:aEBsystem="http://www.example.org/aEBsystem"
+    xsi:schemaLocation="http://www.example.org/aEBsystem aEBsystem.ecore"
+    systemID="AEB006"
+    operatingMode="Emergency">
+  <sensors sensorType="Radar"
+      range="15.0"
+      accuracy="92.0">
+    <detectionEvents
+        timestamp="1698765480"
+        distance="9.0"
+        confidence="85.0">
+      <obstacle
+          obstacleType="Vehicle"
+          speed="25.0"
+          size="4.0"/>
+    </detectionEvents>
+  </sensors>
+  <sensors sensorType="Camera"
+      range="12.0"
+      accuracy="90.0"/>
+  <controller
+      state="Acting"
+      decisionLatency="0.1">
+    <actions
+        actionType="Brake"
+        responseTime="0.5"
+        priority="1"
+        executedBy="//@actuators.0"/>
+    <constraints
+        constraintType="Timing"
+        threshold="0.5"
+        isCritical="true"
+        appliesTo="//@controller/@actions.0"/>
+  </controller>
+  <actuators
+      type="Brake"
+      maxForce="1000.0"
+      status="true"
+      actions="//@controller/@actions.0"/>
+</aEBsystem:AEBSystem>
+```
+
+### Explanation of the Model:
+1. **AEBSystem**: Identified by `systemID="AEB006"` and set to `operatingMode="Emergency"` due to the imminent danger detected.
+2. **Sensors**: Two sensors are modeled:
+   - Radar (`sensorType="Radar"`) with a detection event for an obstacle at 9 meters, satisfying the requirement.
+   - Camera (`sensorType="Camera"`) with no detection event, as specified in the requirement.
+3. **DetectionEvent**: Linked to the Radar sensor, includes a timestamp, distance (9.0 meters), and confidence level (85.0). The obstacle is classified as a `Vehicle` with a speed of 25.0 (within the constraint SpeedRange <= 120.0 for vehicles) and size of 4.0.
+4. **Controller**: Set to `state="Acting"` with a low `decisionLatency="0.1"`. It includes an `EmergencyAction` of type `Brake` with `responseTime="0.5"` (satisfying FastResponse constraint <= 1.0) and a critical timing constraint with `threshold="0.5"` (satisfying CriticalTiming constraint <= 0.5).
+5. **Actuator**: Type `Brake` with `maxForce="1000.0"` and `status="true"`, linked to the braking action.
+6. **Constraints**: A critical timing constraint is applied to the braking action with `threshold="0.5"`, ensuring compliance with the metamodel rules.
+
+This model reflects the requirement that the system reacts safely to an imminent danger detected by the Radar sensor, even though the Camera does not detect the obstacle.

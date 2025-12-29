@@ -1,0 +1,69 @@
+Let's generate an XMI model for the given requirement, ensuring compliance with the AEB metamodel and its constraints.
+
+**Requirement Analysis:**
+- Pedestrian detected at exactly 5 meters.
+- Speed of pedestrian is 30 km/h.
+- Need to decide based on safety constraints (assuming immediate braking due to close proximity and high speed for a pedestrian).
+- According to constraints: Pedestrian speed <= 30.0 (satisfied), EmergencyAction responseTime <= 1.0 (will be set accordingly), and critical timing threshold <= 0.5 (will be applied).
+
+Since the pedestrian is at a critical distance of 5 meters and moving at the maximum allowed speed for a pedestrian, the system should operate in Emergency mode, trigger a braking action with a fast response time, and apply critical safety constraints.
+
+**XMI Model:**
+
+```xml
+<?xml version="1.0" encoding="UTF-8"?>
+<aEBsystem:AEBSystem
+    xmi:version="2.0"
+    xmlns:xmi="http://www.omg.org/XMI"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:aEBsystem="http://www.example.org/aEBsystem"
+    xsi:schemaLocation="http://www.example.org/aEBsystem aEBsystem.ecore"
+    systemID="AEB006"
+    operatingMode="Emergency">
+  <sensors sensorType="Camera"
+      range="8.0"
+      accuracy="92.0">
+    <detectionEvents
+        timestamp="1698765480"
+        distance="5.0"
+        confidence="95.0">
+      <obstacle
+          obstacleType="Pedestrian"
+          speed="30.0"
+          size="1.7"/>
+    </detectionEvents>
+  </sensors>
+  <controller
+      state="Acting"
+      decisionLatency="0.05">
+    <actions
+        actionType="Brake"
+        responseTime="0.3"
+        priority="1"
+        executedBy="//@actuators.0"/>
+    <constraints
+        constraintType="Timing"
+        threshold="0.3"
+        isCritical="true"
+        appliesTo="//@controller/@actions.0"/>
+  </controller>
+  <actuators
+      type="Brake"
+      maxForce="1300.0"
+      status="true"
+      actions="//@controller/@actions.0"/>
+</aEBsystem:AEBSystem>
+```
+
+**Explanation of Model Choices:**
+1. **AEBSystem**: Set `systemID="AEB006"` for uniqueness and `operatingMode="Emergency"` due to the critical proximity (5 meters) and high pedestrian speed (30 km/h).
+2. **Sensor**: Used `sensorType="Camera"` as it is suitable for pedestrian detection at close range. Set `range="8.0"` to cover the detection distance and `accuracy="92.0"` for high reliability.
+3. **DetectionEvent**: Set `distance="5.0"` as per requirement, `timestamp="1698765480"` (arbitrary but unique), and high `confidence="95.0"` due to close proximity.
+4. **Obstacle**: Set `obstacleType="Pedestrian"`, `speed="30.0"` (as given, satisfies SpeedRange constraint <= 30.0), and `size="1.7"` (reasonable for a pedestrian).
+5. **Controller**: Set `state="Acting"` to reflect active response and `decisionLatency="0.05"` for quick decision-making in emergency.
+6. **EmergencyAction**: Set `actionType="Brake"` as the most appropriate response for a close pedestrian, `responseTime="0.3"` (satisfies FastResponse constraint <= 1.0), and `priority="1"` for highest urgency.
+7. **SafetyConstraint**: Set `constraintType="Timing"`, `threshold="0.3"` (satisfies CriticalTiming constraint <= 0.5), and `isCritical="true"` due to the emergency nature.
+8. **Actuator**: Set `type="Brake"`, `maxForce="1300.0"` for strong braking force, and `status="true"` to indicate availability.
+9. **References**: Properly linked `executedBy` and `appliesTo` using XMI paths to maintain model integrity.
+
+This model adheres to the AEB metamodel structure, satisfies all specified constraints (SpeedRange, FastResponse, CriticalTiming), and addresses the requirement effectively by prioritizing a fast braking response to mitigate the risk posed by the pedestrian at 5 meters with 30 km/h speed.
