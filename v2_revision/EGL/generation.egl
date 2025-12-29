@@ -1,0 +1,134 @@
+[% var system = AEBSystem.all.first; %]
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE nta PUBLIC "-//Uppaal Team//DTD Flat System 1.1//EN" "http://www.it.uu.se/research/group/darts/uppaal/flat-1_1.dtd">
+<nta>
+
+<declaration>
+chan detect;
+chan stopForce;
+[% for (a in system.controller.actions) { %]
+chan [%= a.actionType %];
+[% } %]
+clock t;
+</declaration>
+
+<template>
+  <name>AEB_Controller</name>
+  <declaration>
+int threshold = [%= (system.controller.constraints.first().threshold * 10).round() %];
+  </declaration>
+  <location id="id0" x="0" y="0">
+    <name>Idle</name>
+  </location>
+  <location id="id1" x="200" y="0">
+    <name>Assess</name>
+  </location>
+  <location id="id2" x="400" y="0">
+    <name>Act</name>
+    <urgent/>
+    [% if (system.controller.state == "Acting") { %]<initial/>[% } %]
+  </location>
+  <init ref="id0"/>
+  <transition>
+    <source ref="id0"/>
+    <target ref="id1"/>
+    <label kind="synchronisation">detect?</label>
+    <label kind="guard">t &lt;= [%= (system.controller.dicisionLatency * 10).round() %]</label>
+    <label kind="assignment">t = 0</label>
+  </transition>
+  [% for (a in system.controller.actions) { %]
+  <transition>
+    <source ref="id1"/>
+    <target ref="id2"/>
+    <label kind="guard">
+      t &lt;= [%= ((a.responseTime) * 10).round() %]
+      &amp;&amp; threshold &lt;= [%= (system.controller.constraints.first().threshold * 10).round() %]
+    </label>
+    <label kind="synchronisation">[%= a.actionType %]!</label>
+    <label kind="assignment">t = 0</label>
+  </transition>
+  [% } %]
+</template>
+[% for (sensor in system.sensors) { %]
+<template>
+  <name>Sensor_[%= sensor.sensorType.name %]</name>
+  <declaration>
+int range = [%= sensor.range.round() %];
+int accuracy = [%= sensor.accuracy.round() %];
+int distance = [%= sensor.detectionEvents.first().distance.round() %];
+int confidence = [%= sensor.detectionEvents.first().confidence.round() %];
+[% if (sensor.detectionEvents.first().obstacle.speed.isDefined()) { %]
+int obstacleSpeed = [%= sensor.detectionEvents.first().obstacle.speed.round() %];
+[% } else { %]
+int obstacleSpeed = 0;
+[% } %]
+int obstacleSize = [%= sensor.detectionEvents.first().obstacle.size.round() %];
+  </declaration>
+  <location id="s0" x="0" y="0">
+    <name>Waiting</name>
+  </location>
+  <location id="s1" x="150" y="0">
+    <name>Detecting</name>
+  </location>
+  <init ref="s0"/>
+  <transition>
+    <source ref="s0"/>
+    <target ref="s1"/>
+    <label kind="guard">range &gt; 0 &amp;&amp; distance &lt; range &amp;&amp; confidence &gt;= [%= sensor.detectionEvents.first().confidence.round() %] &amp;&amp; obstacleSpeed &gt;= 0</label>
+    <label kind="synchronisation">detect!</label>
+  </transition>
+</template>
+[% } %]
+[% for (actuator in system.actuators) { 
+  var action = actuator.actions.first();
+  var actionType = action.actionType;
+%]
+<template>
+  <name>Actuator_[%= actionType %]</name>
+  <declaration>
+[% if (actuator.maxForce.isDefined()) { %]
+int maxForce = [%= actuator.maxForce.round() %];
+[% } %]
+bool status = [%= actuator.status %];
+  </declaration>
+  <location id="a0" x="0" y="0">
+    <name>Idle</name>
+  </location>
+  <location id="a1" x="150" y="0">
+    <name>Acting</name>
+  </location>
+  <init ref="a0"/>
+  <transition>
+    <source ref="a0"/>
+    <target ref="a1"/>
+    <label kind="guard">status == true</label>
+    <label kind="synchronisation">[%= actionType %]?</label>
+  </transition>
+  <transition>
+    <source ref="a1"/>
+    <target ref="a0"/>
+    <label kind="synchronisation">stopForce?</label>
+  </transition>
+</template>
+[% } %]
+<system>
+AEB = AEB_Controller();
+[% for (sen in system.sensors) { %]
+[%= sen.sensorType.name %] = Sensor_[%= sen.sensorType.name %]();
+[% } %]
+[% var i=0;for (act in system.actuators) {
+   var action = act.actions.first();
+   var actionType = action.actionType;
+   i++;
+%]
+[%= actionType %][%=i%]= Actuator_[%= actionType %]();
+[% } %]
+system AEB[% for (sen in system.sensors) { %], [%= sen.sensorType.name %][% } %]
+[% var i=0;for (act in system.actuators) {
+   var action = act.actions.first();
+   var actionType = action.actionType;
+   i++;
+%], [%= actionType %][%=i%][% } %];
+</system>
+
+</nta>
