@@ -1,0 +1,36 @@
+[
+  { "id": "S1", "requirement": "If an obstacle is detected within 10 meters, brake in 0.5 seconds." },
+  { "id": "S2", "requirement": "If a vehicle’s speed exceeds 50 km/h, warn within 1.0 second." },
+  { "id": "S3", "requirement": "If a pedestrian is detected within 7 meters, brake and warn in 0.4 seconds." },
+  { "id": "S4", "requirement": "If an obstacle is detected within 6 meters, warn in 0.3 seconds." },
+  { "id": "S5", "requirement": "If an obstacle is detected within 15 meters, steer in 1.0 second." },
+  { "id": "S6", "requirement": "If something is too close, react quickly." },
+  {
+    "id": "S7",
+    "requirement": "If multiple obstacles are detected by radar and lidar within 10 meters under rainy conditions, prioritize the closest obstacle and apply the brake within 0.4 seconds, ensuring SpeedRange compliance."
+  },
+  {
+    "id": "S8",
+    "requirement": "The object appears dangerously near and requires immediate action."
+  },
+  {
+    "id": "S9",
+    "requirement": "Radar detects an obstacle at 9 meters but the camera does not. If any sensor detects imminent danger, react safely."
+  },
+  {
+    "id": "S10",
+    "requirement": "If sensor confidence is below 70 percent and an obstacle is detected within 8 meters in fog, apply a conservative response."
+  },
+  {
+    "id": "S11",
+    "requirement": "If the brake actuator is unavailable, prefer steering or warning actions."
+  },
+  {
+    "id": "S12",
+    "requirement": "A pedestrian is detected at exactly 5 meters with speed equal to 30 km/h. Decide according to safety constraints."
+  },
+  {
+    "id": "S13",
+    "requirement": "If time-to-collision is less than 0.5 seconds, immediately apply braking."
+  }
+]
